@@ -1,0 +1,19 @@
+== README
+This is a MEAN stack clone of the popular website https://unsplash.com
+
+Currently, this uses tsd and gulp...
+
+To run:
+    npm install -g tsd gulp
+    npm install
+    npm start
+
+
+Stack main contents:
+1. Express
+2. Angular2
+3. MongoDB (Mongoose)
+4. Typescript
+5. Bootstrap
+6. Zepto
+7. Lodash

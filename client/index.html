@@ -1,0 +1,41 @@
+<html>
+
+  <head>
+    <title>newfamily-example</title>
+    <base href="/"/>
+
+    <!-- 1. Load CSS libraries -->
+    <link href="vendor/css/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+
+    <!-- 2. Load JS libraries -->
+    <script src="vendor/js/zepto/zepto.min.js"></script>
+    <script src="vendor/js/systemjs/dist/system.src.js"></script>
+    <script src="vendor/js/es6-shim/es6-shim.min.js"></script>
+    <script src="vendor/js/systemjs/dist/system-polyfills.js"></script>
+    <script src="vendor/js/angular2/bundles/angular2-polyfills.js"></script>
+    <script src="vendor/js/angular2/bundles/http.js"></script>
+    <script src="vendor/js/rxjs/bundles/Rx.js"></script>
+    <script src="vendor/js/angular2/bundles/angular2.dev.js"></script>
+    <script src="vendor/js/angular2/bundles/router.dev.js"></script>
+
+    <!-- 3. Configure SystemJS -->
+    <script>
+      System.config({
+        packages: {
+          app: {
+            format: 'register',
+            defaultExtension: 'js'
+          }
+        }
+      });
+      System.import('app/main')
+            .then(null, console.error.bind(console));
+    </script>
+
+  </head>
+  <!-- 4. Display the application -->
+  <body>
+    <my-app>Loading...</my-app>
+  </body>
+
+</html>

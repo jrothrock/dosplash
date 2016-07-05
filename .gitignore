@@ -1,0 +1,23 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+server/typings
+
+node_modules
+
+**/.DS_Store
+
+client/**/*.js.map
+client/**/*.js
+
+server/**/*.js.map
+server/*.js
+
+dist

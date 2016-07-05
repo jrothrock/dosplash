@@ -1,0 +1,35 @@
+{
+  "name": "dosplash",
+  "version": "1.0.0",
+  "description": "MEAN stack clone of the popular website unsplash",
+  "main": "dist/server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "gulp build && node dist/server.js"
+  },
+  "keywords": [],
+  "author": "Jack Rothrock",
+  "license": "MIT",
+  "dependencies": {
+    "angular2": "2.0.0-beta.1",
+    "bootstrap": "^3.3.6",
+    "es6-shim": "0.33.3",
+    "express": "4.13.3",
+    "gulp-concat": "2.6.0",
+    "lodash": "^4.13.1",
+    "mongoose": "^4.5.3",
+    "reflect-metadata": "0.1.2",
+    "rxjs": "5.0.0-beta.0",
+    "systemjs": "0.19.16",
+    "zepto": "^1.0.1",
+    "zone.js": "0.5.10"
+  },
+  "devDependencies": {
+    "del": "2.2.0",
+    "gulp": "3.9.0",
+    "gulp-concat": "2.6.0",
+    "gulp-sourcemaps": "1.6.0",
+    "gulp-typescript": "2.10.0",
+    "run-sequence": "1.1.5"
+  }
+}
