@@ -3,8 +3,10 @@ var path = require('path');
 var sourcemaps = require('gulp-sourcemaps');
 var ts = require('gulp-typescript');
 var del = require('del');
-var concat = require('gulp-concat')
+var concat = require('gulp-concat');
 var runSequence = require('run-sequence');
+var exec = require('child_process').exec;
+var sass = require('gulp-sass');
 
 // SERVER
 
@@ -12,8 +14,8 @@ gulp.task('clean', function(){
     return del('dist')
 });
 
-gulp.task('build:server', function () {
 
+gulp.task('build:server', function () {
 	var tsProject = ts.createProject('server/tsconfig.json');
     var tsResult = gulp.src('server/**/*.ts')
 		.pipe(sourcemaps.init())
@@ -27,7 +29,13 @@ gulp.task('build:server', function () {
 // CLIENT
 
 var cssNPMDependencies = [
-	'bootstrap/dist/css/bootstrap.css'
+	'bootstrap/dist/css/bootstrap.css',
+	'font-awesome/css/font-awesome.min.css',
+	'font-awesome/fonts/fontawesome-webfont.eot',
+	'font-awesome/fonts/fontawesome-webfont.svg',
+	'font-awesome/fonts/fontawesome-webfont.ttf',
+	'font-awesome/fonts/fontawesome-webfont.woff',
+	'font-awesome/fonts/fontawesome-webfont.woff2'
 ]
 
 var jsNPMDependencies = [
@@ -39,7 +47,7 @@ var jsNPMDependencies = [
     'angular2/bundles/http.js',
     'rxjs/bundles/Rx.js',
     'angular2/bundles/angular2.dev.js',
-    'angular2/bundles/router.dev.js',
+    'angular2/bundles/router.dev.js'
 ] 
 
 gulp.task('build:index', function(){
@@ -53,8 +61,7 @@ gulp.task('build:index', function(){
     var copyJSNPMDependencies = gulp.src(mappedJSPaths, {base:'node_modules'})
         .pipe(gulp.dest('dist/vendor/js'))
      
- 
-    var copyIndex = gulp.src('client/index.html')
+    var copyIndex = gulp.src('client/**/*.html')
         .pipe(gulp.dest('dist'))
     return [copyCSSNPMDependencies, copyJSNPMDependencies, copyIndex];
 });
@@ -64,21 +71,37 @@ gulp.task('build:app', function(){
     var tsResult = gulp.src('client/**/*.ts')
 		.pipe(sourcemaps.init())
         .pipe(ts(tsProject))
-	return tsResult.js
+    var appCSS = gulp.src('client/**/*.scss')
+	    .pipe(sass().on('error', sass.logError))
+	    .pipe(gulp.dest('dist'));
+	var appImages = gulp.src('client/app/assets/images/*')
+		.pipe(gulp.dest('dist/app/assets/images'));
+	var tsResultCopy = tsResult.js
         .pipe(sourcemaps.write()) 
-		.pipe(gulp.dest('dist'))
+		.pipe(gulp.dest('dist'));
+	return [tsResultCopy, appCSS, appImages];
+});
+
+var watchFiles = ['client/**/*.ts', 'client/**/*.scss', 'client/index.html', 'server/**/*.ts', 'client/**/*.html']
+
+var started = false;
+
+gulp.task('watch', function(){
+ gulp.watch(watchFiles, ['build']);
+ started = false;
 });
 
 gulp.task('build', function(callback){
     runSequence('clean', 'build:server', 'build:index', 'build:app', callback);
 });
 
-var packagePaths = [ 'dist/**',
-					'!node_modules',
-					'!client',
-					'!server',
-					'!gulpfile.js',
-					'!package.json']
-
-
-gulp.task('default', ['build']);
+gulp.task('start-server', ['build', 'watch'], function (cb) {
+	if(!started){
+		exec('node dist/server.js', function (err, stdout, stderr) {
+	    console.log(stdout);
+	    console.log(stderr);
+	    cb(err);
+	    started = true;
+	  });
+	}
+});

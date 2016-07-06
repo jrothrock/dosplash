@@ -6,7 +6,7 @@ var path = require('path');
 
 module.exports = function(app) {
 
-	app.get('/photos', function (req, res) {
+	app.get('/api/photos', function (req, res) {
 		res.json({info: 'it worked'});
 	});
 

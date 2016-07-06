@@ -1,0 +1,90 @@
+body{
+	font-family: Courier,monospace;
+	padding-top: 70px;
+}
+
+nav {
+	font-family: 'helvetica';
+	font-size: 11px;
+	font-weight: 800;
+	line-height: 32px;
+	text-transform: uppercase;
+}
+
+a {
+	color: #999;
+}
+
+.home-body{
+	position: absolute;
+}
+.home-body-text{
+    margin-top: 30px;
+    text-align: center;
+    position: fixed;
+    align-content: center;
+    margin-left: 38vw;
+}
+.navbar-nav > li > a {
+	margin-right: 20px;
+	
+	&:hover{
+		color: #111;
+		background-color: transparent;
+	}
+	&:active{
+		background-color: transparent;
+		color: #111;
+		font-weight: 1000;
+	}
+	&:focus{
+		background-color: transparent;
+		color: #111;
+		font-weight: 1000;
+	}
+}
+
+.btn-social{
+	margin-top: 8px;
+	height: 30px;
+	width: 60px;
+	border-radius: 5px;
+	margin-right: 20px;
+		font-family: 'helvetica';
+	font-size: 11px;
+	font-weight: 800;
+	line-height: 32px;
+}
+/* Change text so that it is not beging centered by margins, but by positioning*/
+.btn-social-text{
+	margin-top: -15px;
+	margin-left: -9px;
+    color: #fff;
+}
+
+.center{
+	float:none;
+	position: absolute;
+	left: 38vw;
+}
+
+.icon{
+	margin-top: 40px;
+}
+.social-icons{
+	position:fixed;
+	margin-top: 95px;
+	margin-left: 46vw;
+
+	i{
+		color: #999;
+		margin-right: 20px;
+		&:hover{
+			cursor: pointer;
+			color: #111;
+		}
+		&:last-child{
+			margin-left: -12px;
+		}
+	}
+}

@@ -17,3 +17,4 @@ Stack main contents:
 5. Bootstrap
 6. Zepto
 7. Lodash
+8. Font Awesome
