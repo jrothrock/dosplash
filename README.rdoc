@@ -4,7 +4,6 @@ This is a MEAN stack clone of the popular website https://unsplash.com
 Currently, this uses tsd and gulp...
 
 To run:
-    npm install -g tsd gulp
     npm install
     npm start
 

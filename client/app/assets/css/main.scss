@@ -42,6 +42,11 @@ a {
 		color: #111;
 		font-weight: 1000;
 	}
+	&.active{
+		background-color: transparent;
+		color: #111;
+		font-weight: 1000;
+	}
 }
 
 .btn-social{
@@ -86,5 +91,10 @@ a {
 		&:last-child{
 			margin-left: -12px;
 		}
+	}
+}
+.sign-out{
+	&:hover{
+		cursor:pointer;
 	}
 }

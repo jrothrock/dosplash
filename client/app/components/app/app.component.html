@@ -2,14 +2,17 @@
 	<nav class="navbar navbar-fixed-top">
 	  <div class="navbar-container">
 	     <ul class="nav navbar-nav navbar-left">
-	      <li><a [routerLink]="['Home']">Featured</a></li>
+	      <li><a [class.active]="router.isRouteActive(router.generate(['/Home']))" [routerLink]="['Home']">Featured</a></li>
 	      <li><a href=''>New</a></li>
 	      <li class='center'><a href=''><i class="fa fa-camera-retro fa-3x"></i></a></li>
 	    </ul>
 	    <ul class="nav navbar-nav navbar-right">
 	      <li><a href=''>Test</a></li>
-	      <li><a [routerLink]="['SignIn']">Sign In</a></li>
-	      <li class='btn btn-success btn-social'><a href='' class='btn-social-text'>Join</a></li>
+	      <li *ngIf="!isLoggedIn()">
+	      <a [class.active]="router.isRouteActive(router.generate(['/SignIn']))" [routerLink]="['SignIn']">Sign In</a>
+	      </li>
+	      <li class='btn btn-success btn-social' *ngIf="!isLoggedIn()"><a [class.active]="router.isRouteActive(router.generate(['/SignUp']))" [routerLink]="['SignUp']" class='btn-social-text'>Join</a></li>
+	      <li class='sign-out' *ngIf="isLoggedIn()"><a (click)="logout()">Sign Out</a></li>
 	    </ul>
 	  </div>
 	</nav>

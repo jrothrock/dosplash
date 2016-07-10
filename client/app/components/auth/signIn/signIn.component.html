@@ -1,0 +1,21 @@
+<div class='container'>
+  <div class='row'>
+    <div class='col-md-4 col-md-offset-4'>
+      <div class='log-in panel'>
+        <div class='panel-heading'>
+          <h2> Login </h2>
+        </div>
+        <form (ngSubmit)="login()" #loginForm="ngForm">
+          <div class='panel-body'>
+            <label for="name">Email</label>
+            <input [(ngModel)]="usercreds.email" ngControl="name"  #name="ngForm" type="text" class="form-control" required />
+             <label for="password">Password</label>
+            <input [(ngModel)]="usercreds.password" ngControl="password"  #password="ngForm" type="password" class="form-control" required />
+            <button type="submit" class="btn btn-default">Login</button>
+	    	 <a (click)="signup()">Click here to Signup</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
