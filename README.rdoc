@@ -1,8 +1,6 @@
 == README
 This is a MEAN stack clone of the popular website https://unsplash.com
 
-Currently, this uses tsd and gulp...
-
 To run:
     npm install
     npm start

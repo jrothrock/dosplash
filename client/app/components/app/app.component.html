@@ -4,7 +4,7 @@
 	     <ul class="nav navbar-nav navbar-left">
 	      <li><a [class.active]="router.isRouteActive(router.generate(['/Home']))" [routerLink]="['Home']">Featured</a></li>
 	      <li><a href=''>New</a></li>
-	      <li class='center'><a href=''><i class="fa fa-camera-retro fa-3x"></i></a></li>
+	      <li class='center'><a [routerLink]="['Home']"><i class="fa fa-camera-retro fa-3x"></i></a></li>
 	    </ul>
 	    <ul class="nav navbar-nav navbar-right">
 	      <li><a href=''>Test</a></li>

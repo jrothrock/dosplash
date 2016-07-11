@@ -7,12 +7,17 @@
         </div>
         <form (ngSubmit)="login()" #loginForm="ngForm">
           <div class='panel-body'>
-            <label for="name">Email</label>
-            <input [(ngModel)]="usercreds.email" ngControl="name"  #name="ngForm" type="text" class="form-control" required />
-             <label for="password">Password</label>
-            <input [(ngModel)]="usercreds.password" ngControl="password"  #password="ngForm" type="password" class="form-control" required />
+            <em *ngIf="error">Enter a valid email and password</em>
+            <div class="form-group" [ngClass]="{ 'has-error' : error }">
+              <label class="control-label" for="email">Email</label>
+              <input [(ngModel)]="usercreds.email" ngControl="name"  #name="ngForm" type="text" class="form-control" required />
+            </div>
+            <div class="form-group" [ngClass]="{ 'has-error' : error }">
+               <label class="control-label" for="password">Password</label>
+              <input [(ngModel)]="usercreds.password" ngControl="password"  #password="ngForm" type="password" class="form-control" required />
+            </div>
             <button type="submit" class="btn btn-default">Login</button>
-	    	 <a (click)="signup()">Click here to Signup</a>
+	    	 <a (click)="signup()" style="cursor:pointer">Sign up</a>
           </div>
         </form>
       </div>

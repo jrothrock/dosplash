@@ -11,7 +11,7 @@ var functions = {
             if (err) throw err;
             
             if(!user) {
-                res.status(403).send({success: false, msg: 'Authentication failed, User not found'});
+                res.send({success: false, "message": 'Authentication failed, User not found'});
             }
             
            else {
@@ -42,7 +42,7 @@ var functions = {
                         });
 
                     } else {
-                        return res.status(403).send({success: false, msg: 'Authenticaton failed, wrong password.'});
+                        return res.send({success: false, "message": 'Authenticaton failed, wrong password.'});
                     }
                 });
             }
@@ -131,8 +131,6 @@ var functions = {
         });
     },
 
-
-
     getinfo: function(req, res){
         if(req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
             var token = req.headers.authorization.split(' ')[1];
@@ -143,6 +141,7 @@ var functions = {
             return res.json({success:false, msg: 'No header'});
         }
     }
+
 
 
     

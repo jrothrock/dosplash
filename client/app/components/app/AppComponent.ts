@@ -8,6 +8,7 @@ import { HomeComponent } from '../home/HomeComponent';
 import { SignInComponent } from '../auth/signIn/SignInComponent';
 import { PhotoComponent } from '../photos/PhotoComponent';
 import { SignUpComponent } from '../auth/signUp/SignUpComponent';
+import { SubmitComponent } from '../submit/SubmitComponent';
 
 
 @Component({
@@ -23,7 +24,8 @@ import { SignUpComponent } from '../auth/signUp/SignUpComponent';
     { path: '/', name: 'Home', component: HomeComponent, useAsDefault: true },
     { path: '/signin', name: 'SignIn', component: SignInComponent},
     { path: '/signup', name: 'SignUp', component: SignUpComponent},
-    { path: '/photos/:id', name: 'PhotoDetail', component: PhotoComponent}
+    { path: '/photos/:id', name: 'PhotoDetail', component: PhotoComponent},
+    { path: '/submit', name: 'Submit', component: SubmitComponent}
 ])
 
 export class AppComponent {

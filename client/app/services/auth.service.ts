@@ -24,27 +24,32 @@ export class AuthService {
         });
         var creds = "email=" + user.email + "&password=" + user.password;
         
-        return new Promise(resolve => {
+        return new Promise((resolve, reject) => {
         
             this._http.post('http://localhost:3000/auth/login', creds, {headers: headers}).subscribe(data => {
-            
+            console.log(data.json());
             if(data.json().success){
                 console.log(data.json());
                 window.localStorage.setItem('user', data.json().data.user);
                 window.localStorage.setItem('token', data.json().data.token);
-            this.isLoggedin = true; }   
-            resolve(this.isLoggedin);
+                this.isLoggedin = true; 
+                resolve(true);
+            }
+            else
+                reject(data.json());
+  
                 
-        }); 
+        })
             
+        }).catch(function(e){
+            console.log(e);
         });
+        }
         
-        
-    }
 
 
     register(user) {
-        
+        console.log(user);
         return new Promise((resolve, reject) => {
         var creds = "email=" + user.email + "&username=" + user.username + "&password=" + user.password;
         console.log(creds);

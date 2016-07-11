@@ -5,14 +5,28 @@
         <div class='panel-heading'>
           <h2> Create Your Account </h2>
         </div>
-        <form *ngIf="!success" (ngSubmit)="handleSubmit(model)" #addUserForm="ngForm">
+       <form [ngFormModel]="registrationForm" (ngSubmit)="registerUser(registrationForm.value)">
           <div class='panel-body'>
-            <label for="username">Email</label>
-            <input [(ngModel)]="model.email" ngControl="username"  #name="ngForm" type="text" class="form-control" required />
-            <label for="username">Username</label>
-            <input [(ngModel)]="model.username" ngControl="username"  #name="ngForm" type="text" class="form-control" required />
-            <label for="password">Password</label>
-            <input [(ngModel)]="model.password" ngControl="password"  #password="ngForm" type="password" class="form-control" required />
+              <div class="form-group" [ngClass]="{ 'has-error' : (!email.valid && email.touched) || error }">
+                <label class="control-label" for="email">Email</label>
+                <em *ngIf="email.hasError('required') && email.touched">Required</em>
+                <em *ngIf="email.hasError('pattern') && email.touched">Enter a valid email address</em>
+                <em *ngIf="error">Email already in use</em>
+                <input id="email" type="text" class="form-control" placeholder="Email" ngControl="email">
+              </div>
+
+             <div class="form-group" [ngClass]="{ 'has-error' : !username.valid && submitAttempt }">
+              <label class="control-label" for="username">Username</label>
+              <em *ngIf="!username.valid && username.touched">Required</em>
+              <input id="username" type="text" class="form-control" placeholder="Username" ngControl="username">
+            </div>
+
+            <div class="form-group" [ngClass]="{ 'has-error' : !password.valid && password.touched }">
+              <label class="control-label" for="password">Password</label>
+              <em *ngIf="password.hasError('required') && password.touched">Required</em>
+              <em *ngIf="password.hasError('minlength') && password.touched">Must be at least 6 characters</em>
+              <input id="password" type="password" class="form-control" placeholder="Password" ngControl="password">
+            </div>
             <button type="submit" class="btn btn-default">Register</button>
           </div>
         </form>

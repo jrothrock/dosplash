@@ -3,14 +3,14 @@ import { Http, Headers } from 'angular2/http';
 import { Router, ROUTER_DIRECTIVES }  from 'angular2/router';
 import {User} from '../../../models/user';
 import {AuthService} from '../../../services/auth.service';
-import {NgClass, NgForm} from 'angular2/common';
+import {FORM_DIRECTIVES, FormBuilder, Control, ControlGroup, Validators} from 'angular2/common';
 
 @Component({
 	selector: "SignIn",
     templateUrl: 'app/components/auth/signIn/signIn.component.html',
-        directives: [
+    directives: [
         ROUTER_DIRECTIVES,
-        NgClass
+        FORM_DIRECTIVES
     ],
     providers: [AuthService]
 })
@@ -28,7 +28,9 @@ export class SignInComponent {
         	console.log(data);
             if(data){
                 this._router.navigateByUrl('/');
-          }      
+            } else {
+                this.error = true;
+            }      
         })
     }
 
