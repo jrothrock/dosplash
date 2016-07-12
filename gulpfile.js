@@ -7,7 +7,8 @@ var concat = require('gulp-concat');
 var runSequence = require('run-sequence');
 var exec = require('child_process').exec;
 var sass = require('gulp-sass');
-
+var imagemin = require('gulp-imagemin');
+var imageResize = require('gulp-image-resize');
 // SERVER
 
 gulp.task('clean', function(){
@@ -31,6 +32,7 @@ gulp.task('build:server', function () {
 var cssNPMDependencies = [
 	'bootstrap/dist/css/bootstrap.css',
 	'font-awesome/css/font-awesome.min.css',
+	'notie/dist/notie.css',
 	'font-awesome/fonts/fontawesome-webfont.eot',
 	'font-awesome/fonts/fontawesome-webfont.svg',
 	'font-awesome/fonts/fontawesome-webfont.ttf',
@@ -40,6 +42,7 @@ var cssNPMDependencies = [
 
 var jsNPMDependencies = [
 	'zepto/zepto.min.js',
+	'notie/dist/notie.min.js',
     'systemjs/dist/system.src.js',
     'es6-shim/es6-shim.min.js',
     'systemjs/dist/system-polyfills.js',
@@ -82,6 +85,12 @@ gulp.task('build:app', function(){
 	return [tsResultCopy, appCSS, appImages];
 });
 
+gulp.task('build:images', () =>
+	gulp.src('uploads/*')
+		.pipe(imagemin())
+		.pipe(gulp.dest('dist/app/assets/images'))
+);
+
 var watchFiles = ['client/**/*.ts', 'client/**/*.scss', 'client/index.html', 'server/**/*.ts', 'client/**/*.html']
 
 var started = false;
@@ -92,7 +101,7 @@ gulp.task('watch', function(){
 });
 
 gulp.task('build', function(callback){
-    runSequence('clean', 'build:server', 'build:index', 'build:app', callback);
+    runSequence('clean', 'build:server', 'build:index', 'build:app', 'build:images', callback);
 });
 
 gulp.task('start-server', ['build', 'watch'], function (cb) {

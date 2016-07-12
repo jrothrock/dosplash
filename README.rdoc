@@ -1,6 +1,9 @@
 == README
 This is a MEAN stack clone of the popular website https://unsplash.com
 
+Currently, the photos are servered from the database (this is not ideal) just for the hell of it - there is commented out code for pulling from the filesystem, though. However, the ideal situation would be to use a CDN to store the photos.
+
+
 To run:
     npm install
     npm start

@@ -1,15 +1,15 @@
 var _ = require('lodash');
 var express = require('express');
-var actions = require('../methods/actions');
+var authActions = require('../methods/auth.actions');
 
 module.exports = function(app) {
 
-	app.post('/auth/login', actions.authenticate);
+	app.post('/auth/login', authActions.authenticate);
 
-	app.post('/auth/adduser', actions.addNew);
+	app.post('/auth/adduser', authActions.addNew);
 
-	app.post('/auth/logout', actions.logOut);
+	app.post('/auth/logout', authActions.logOut);
 
-	app.get('/api/getinfo', actions.getinfo);
+	app.get('/api/getinfo', authActions.getinfo);
 
 };

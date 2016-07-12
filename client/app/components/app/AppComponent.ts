@@ -1,7 +1,7 @@
 import { Component } from 'angular2/core';
 import { HTTP_PROVIDERS } from 'angular2/http';
 import 'rxjs/Rx';   // Load all features
-import { Router, ROUTER_PROVIDERS, RouteConfig, ROUTER_DIRECTIVES } from 'angular2/router';
+import { Router, ROUTER_PROVIDERS, RouteConfig, ROUTER_DIRECTIVES, CanActivate } from 'angular2/router';
 import {AuthService} from '../../services/auth.service';
 
 import { HomeComponent } from '../home/HomeComponent';
@@ -9,7 +9,6 @@ import { SignInComponent } from '../auth/signIn/SignInComponent';
 import { PhotoComponent } from '../photos/PhotoComponent';
 import { SignUpComponent } from '../auth/signUp/SignUpComponent';
 import { SubmitComponent } from '../submit/SubmitComponent';
-
 
 @Component({
     selector: 'my-app',
@@ -25,8 +24,10 @@ import { SubmitComponent } from '../submit/SubmitComponent';
     { path: '/signin', name: 'SignIn', component: SignInComponent},
     { path: '/signup', name: 'SignUp', component: SignUpComponent},
     { path: '/photos/:id', name: 'PhotoDetail', component: PhotoComponent},
-    { path: '/submit', name: 'Submit', component: SubmitComponent}
+    { path: '/submit', name: 'Submit', component: SubmitComponent},
+    { path: '/**', redirectTo: ['Home'] }
 ])
+
 
 export class AppComponent {
     constructor (private router: Router, public _auth: AuthService) {

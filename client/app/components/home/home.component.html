@@ -4,11 +4,17 @@
 			<i class="fa fa-camera-retro fa-5x"></i>
 		</div>
 	</row>
-	<row style='font-size: 15px;font-weight: 400'>
+	<div style='margin-top:60px;font-size: 15px;font-weight: 400'>
 		<span class="home-body-text"> Free (do whatever you want) high-resolution photos. </span>
-		<span class="home-body-text" style='margin-top:60px; margin-left:40vw'> For 10 new photos every 10 days, subscribe. </span>
+		<div style='margin-top:10px;'>
+		<span class="home-body-text" style='margin-top:60px; margin-left:40vw'> For 10 new photos every 10 days, subscribe. </span></div>
+	</div>
+	<div style='margin-top:20px'>
 		<span class='social-icons'><i class="fa fa-twitter fa-lg" aria-hidden="true"></i><i class="fa fa-facebook-official fa-lg" aria-hidden="true"></i><i class="fa fa-pinterest-p fa-lg" aria-hidden="true"></i>
 		<i class="fa fa-instagram fa-lg" aria-hidden="true"></i></span>
-		<span style='position:fixed;margin-top: 150px;margin-left: 46vw'><a (click)="submit()" style="cursor:pointer;text-decoration: underline"> Submit a photo </a></span>
-	</row>
+	</div>
+	<div style='margin-top:20px'>
+		<span style='margin-top: 25%;margin-left: 46vw; cursor:pointer;text-decoration: underline'><a (click)="submit()"> Submit a photo </a></span>
+	</div>
+	<PhotoDetail></PhotoDetail>
 </div>

@@ -1,0 +1,13 @@
+<em *ngIf="noPhotos" class='col-md-6 col-md-offset-3 text-center' style='margin-top: 140px;font-size: 16px'>No photos, be the first to add one!</em>
+<em *ngIf="submit" class='col-md-6 col-md-offset-3 text-center alert alert-success' style='margin-top:40px;font-size: 16px'>Successfully added a photo</em>
+<div style='margin-top:6%'>
+	<div class="container-fluid" style='margin-bottom:20%' *ngFor="#photo of photos">
+		<div class="col-md-6 col-sm-12 col-xs-6 col-md-offset-3 col-xs-offset-3">
+		    <div class="thumbnail_container">
+		      	<div class="thumbnail">
+					<img src="{{photo}}" />
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

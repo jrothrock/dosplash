@@ -8,6 +8,8 @@ pids
 *.pid
 *.seed
 
+typings
+client/typings
 server/typings
 
 node_modules

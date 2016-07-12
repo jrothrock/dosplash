@@ -8,17 +8,21 @@ import { Router, ROUTER_DIRECTIVES }  from 'angular2/router';
 })
 export class SubmitComponent {
 	filesToUpload: Array<File>;
- 
+     error = false;
     constructor(private _router: Router) {
         this.filesToUpload = [];
     }
 
+    public getToken () {
+        return localStorage.getItem('token') || '';
+    }
+
 	upload() {
         this.makeFileRequest("http://localhost:3000/api/upload", [], this.filesToUpload).then((result) => {
-        	this._router.navigate(['Home']);
+        	this._router.parent.navigateByUrl('?submit=true');
             console.log(result);
         }, (error) => {
-            console.error(error);
+            
         });
     }
  
@@ -31,6 +35,11 @@ export class SubmitComponent {
             var formData: any = new FormData();
             var xhr = new XMLHttpRequest();
             for(var i = 0; i < files.length; i++) {
+                if(!files[i].name.match(/\.(jpg|jpeg|png)$/)){
+                    this.error = true;
+                    reject();
+                    return false;
+                }
                 formData.append("uploads[]", files[i], files[i].name);
             }
             xhr.onreadystatechange = function () {
@@ -43,6 +52,7 @@ export class SubmitComponent {
                 }
             }
             xhr.open("POST", url, true);
+            xhr.setRequestHeader("Authorization", 'Bearer ' + this.getToken());
             xhr.send(formData);
         });
     }
