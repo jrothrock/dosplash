@@ -25,3 +25,5 @@ server/*.js
 dist
 
 uploads
+
+todo.txt

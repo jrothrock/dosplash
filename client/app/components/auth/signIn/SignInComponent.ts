@@ -21,7 +21,7 @@ export class SignInComponent {
     submit: boolean;
 
 	constructor(private _http: Http, private _homeComponent:HomeComponent, private _router: Router, private _authservice: AuthService, private _params: RouteParams) {
-        this.usercreds = new User('','','');
+        this.usercreds = new User('','','','','');
         this.submitted = false;
         this.submit = !!_params.get('submit'); //cast to boolean for 'need to login' message in template
     }

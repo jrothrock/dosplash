@@ -1,5 +1,5 @@
 import { Component } from 'angular2/core';
-import { Router, ROUTER_DIRECTIVES }  from 'angular2/router';
+import { Router, ROUTER_DIRECTIVES, RouteParams }  from 'angular2/router';
 
 @Component({
 	selector: "Submit",
@@ -9,8 +9,10 @@ import { Router, ROUTER_DIRECTIVES }  from 'angular2/router';
 export class SubmitComponent {
 	filesToUpload: Array<File>;
      error = false;
-    constructor(private _router: Router) {
+     submit:boolean = false;
+    constructor(private _router: Router, private _params: RouteParams) {
         this.filesToUpload = [];
+        this.submit = !!_params.get('submit')
     }
 
     public getToken () {
@@ -19,8 +21,17 @@ export class SubmitComponent {
 
 	upload() {
         this.makeFileRequest("http://localhost:3000/api/upload", [], this.filesToUpload).then((result) => {
-        	this._router.parent.navigateByUrl('?submit=true');
             console.log(result);
+            if(result.success){
+                this._router.parent.navigateByUrl('?submit=true');
+            }
+            else if(result.destroy){
+                window.localStorage.clear();
+                this._router.parent.navigateByUrl('?submit=out')
+            }
+            else{
+                this._router.parent.navigateByUrl('/submit?submit=failed');
+            }
         }, (error) => {
             
         });

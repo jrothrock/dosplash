@@ -23,7 +23,7 @@ var functions = {
                         console.log("Create token with user id", user._id);
                         var token = jwt.sign({key:user._id}, config.secret, 
                                 {
-                                    expiresIn: config.jwtExpiry // Taken from config.js and made available in index.js
+                                    expiresIn: config.jwtExpiry
                                 }
                         );
                         user.token = token;
@@ -35,7 +35,10 @@ var functions = {
                                 success: true,
                                 message: 'Authenticated user.',
                                 data: {
-                                    user: dbRes.email,
+                                    first: dbRes.firstname,
+                                    last: dbRes.lastname,
+                                    email: dbRes.email,
+                                    user: dbRes.username,
                                     token: token
                                 }
                             });
@@ -50,6 +53,10 @@ var functions = {
         });
     },
 
+    capitalize: function(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+    },
+
     addNew: function(req, res){
         if((!req.body.email) || (!req.body.username) || (!req.body.password)){
             console.log(req.body.email);
@@ -59,13 +66,17 @@ var functions = {
             res.json({success: false, msg: 'Enter all values'});
         }
         else {
+            console.log(req.body.firstname);
+            console.log(req.body.lastname);
             console.log(req.body.email);
             console.log(req.body.username);
             console.log(req.body.password);
 
             var newUser = User({
+                firstname: functions.capitalize(req.body.firstname),
+                lastname: functions.capitalize(req.body.lastname),
                 email: req.body.email,
-                username: req.body.username,
+                username: '@' + req.body.username,
                 password: req.body.password,
                 token: undefined
             });
@@ -74,7 +85,7 @@ var functions = {
              console.log(config.jwtExpiry);
             var token = jwt.sign({key:newUser._id}, config.secret, 
                                 {
-                                    expiresIn: config.jwtExpiry // Taken from config.js and made available in index.js
+                                    expiresIn: config.jwtExpiry
                                 }
             );
             newUser.token = token;
@@ -89,13 +100,16 @@ var functions = {
                     dbRes.password = undefined;
                     dbRes.token = undefined;
                     res.json({success:true, 
-                              msg:'Successfully saved',
-                              data: {
-                                    user: dbRes.email,
-                                    token: token
-                            }
-                            });
-                }
+                        msg:'Successfully saved',
+                        data: {
+                            first: dbRes.firstname,
+                            last: dbRes.lastname,
+                            email: dbRes.email,
+                            user: dbRes.username,
+                            token: token
+                        }
+                    });
+            }
             });
         }
     },
@@ -141,11 +155,6 @@ var functions = {
             return res.json({success:false, msg: 'No header'});
         }
     }
-
-
-
-    
-    
 };
 
 module.exports = functions;

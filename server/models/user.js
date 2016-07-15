@@ -1,7 +1,16 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var bcrypt = require('bcrypt');
+var Photo = require('./photo');
 var UserSchema = new Schema({
+    firstname: {
+        type: String,
+        required: true
+    },
+    lastname: {
+        type: String,
+        required: true
+    },
     email: {
         type: String,
         unique: true,
@@ -9,7 +18,8 @@ var UserSchema = new Schema({
     },
     username: {
         type: String,
-        required: true
+        required: true,
+        select: false
     },
     password: {
         type: String,
@@ -18,7 +28,17 @@ var UserSchema = new Schema({
     token : {
             type: String,
             select: false
-    }
+    },
+    photos : [{ type: Schema.Types.ObjectId, ref: 'Photo' }],
+    website : {
+            type: String,
+    },
+    location : {
+            type: String,
+    },
+    bio : {
+            type: String,
+    },
 });
  
 UserSchema.pre('save', function (next) {

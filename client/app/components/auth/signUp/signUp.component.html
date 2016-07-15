@@ -7,27 +7,45 @@
         </div>
        <form [ngFormModel]="registrationForm" (ngSubmit)="registerUser(registrationForm.value)">
           <div class='panel-body'>
-              <div class="form-group" [ngClass]="{ 'has-error' : (!email.valid && email.touched) || error }">
-                <label class="control-label" for="email">Email</label>
-                <em *ngIf="email.hasError('required') && email.touched">Required</em>
-                <em *ngIf="email.hasError('pattern') && email.touched">Enter a valid email address</em>
-                <em *ngIf="error">Email already in use</em>
-                <input id="email" type="text" class="form-control" placeholder="Email" ngControl="email">
-              </div>
 
-             <div class="form-group" [ngClass]="{ 'has-error' : !username.valid && submitAttempt }">
-              <label class="control-label" for="username">Username</label>
-              <em *ngIf="!username.valid && username.touched">Required</em>
+            <div class="form-group" [ngClass]="{ 'has-error' : !firstname.valid && firstname.dirty }">
+              <label class="control-label" for="firstname">First name</label>
+              <em *ngIf="firstname.hasError('required') && firstname.touched && firstname.dirty">Required</em>
+              <em *ngIf="firstname.hasError('pattern') && firstname.touched && firstname.dirty">Enter a valid first name</em>
+              <input id="firstname" type="text" class="form-control" placeholder="Firstname" ngControl="firstname">
+            </div>
+
+            <div class="form-group" [ngClass]="{ 'has-error' : !lastname.valid  && lastname.dirty }">
+              <label class="control-label" for="lastname">Last name</label>
+              <em *ngIf="lastname.hasError('required') && lastname.touched && lastname.dirty">Required</em>
+              <em *ngIf="lastname.hasError('pattern') && lastname.touched && lastname.dirty">Enter a valid last name</em>
+              <input id="lastname" type="text" class="form-control" placeholder="Lastname" ngControl="lastname">
+            </div>
+
+            <div class="form-group" [ngClass]="{ 'has-error' : (!email.valid && email.touched && email.dirty) || error }">
+              <label class="control-label" for="email">Email</label>
+              <em *ngIf="email.hasError('required') && email.touched && email.dirty">Required</em>
+              <em *ngIf="email.hasError('pattern') && email.touched && email.dirty">Enter a valid email address</em>
+              <em *ngIf="error">Email already in use</em>
+              <input id="email" type="text" class="form-control" placeholder="Email" ngControl="email">
+            </div>
+
+            <div class="form-group" [ngClass]="{ 'has-error' : !username.valid && username.dirty }">
+              <label class="control-label" for="username">Username <span style='color:grey; font-size: 0.8em'>only letters, numbers and underscores.</span></label>
+              <em *ngIf="username.hasError('required') && username.touched && username.dirty">Required</em>
+              <em *ngIf="username.hasError('pattern') && username.touched && username.dirty">Enter a valid username</em>
               <input id="username" type="text" class="form-control" placeholder="Username" ngControl="username">
             </div>
 
-            <div class="form-group" [ngClass]="{ 'has-error' : !password.valid && password.touched }">
+            <div class="form-group" [ngClass]="{ 'has-error' : !password.valid && password.touched && password.dirty }">
               <label class="control-label" for="password">Password</label>
-              <em *ngIf="password.hasError('required') && password.touched">Required</em>
-              <em *ngIf="password.hasError('minlength') && password.touched">Must be at least 6 characters</em>
+              <em *ngIf="password.hasError('required') && password.touched && password.dirty">Required</em>
+              <em *ngIf="password.hasError('minlength') && password.touched && password.dirty">Must be at least 6 characters</em>
               <input id="password" type="password" class="form-control" placeholder="Password" ngControl="password">
             </div>
+
             <button type="submit" class="btn btn-default">Register</button>
+            <a (click)="signin()" style="cursor:pointer">Sign in</a>
           </div>
         </form>
       </div>

@@ -17,6 +17,8 @@ import {AuthService} from '../../../services/auth.service';
 })
 export class SignUpComponent {
  registrationForm: ControlGroup;
+  firstname: Control;
+  lastname: Control;
   username: Control;
   email: Control;
   password: Control;
@@ -24,12 +26,15 @@ export class SignUpComponent {
   submit: boolean;
 
 	constructor(private http: Http, private builder: FormBuilder, private _authService: AuthService, private _router: Router, private _params: RouteParams) {
-
-    this.username = new Control('', Validators.required)
-    this.email = new Control('', Validators.compose([Validators.required, Validators.pattern('[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?')]))
+    this.firstname = new Control('', Validators.compose([Validators.required, Validators.pattern('^[a-zA-Z-]*$')]));
+    this.lastname = new Control('', Validators.compose([Validators.required, Validators.pattern('^[a-zA-Z-]*$')]));
+    this.username = new Control('', Validators.compose([Validators.required, Validators.pattern('^[a-zA-Z0-9_]*$')]));
+    this.email = new Control('', Validators.compose([Validators.required, Validators.pattern('[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?')]));
     this.password = new Control('', Validators.compose([Validators.required, Validators.minLength(6)]));
 
     this.registrationForm = builder.group({
+      firstname: this.firstname,
+      lastname: this.lastname,
       username: this.username,
       email: this.email,
       password: this.password
@@ -40,9 +45,14 @@ export class SignUpComponent {
     success = false;
     error = null;
 
-    registerUser = function (User) {
+    registerUser(User) {
         this.submitAttempt = true;
-        if(User.password.length > 5 && /^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i.test(User.email)){
+        if(
+         User.password.length > 5 
+         && /^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i.test(User.email)
+         && /^[a-zA-Z0-9_]*$/.test(User.username)
+         && /^[a-zA-Z]*$/.test(User.firstname)
+         && /^[a-zA-Z]*$/.test(User.lastname)){
 
         
         console.log(User);
@@ -59,11 +69,19 @@ export class SignUpComponent {
                  this._router.navigate(['Submit']);
                  return true;
                }
-                this._router.navigate(['Home']);
+                this._router.parent.navigateByUrl('/?submit=register');
                 return true;
             }
             this.error = true;
         });
        }
+    }
+
+    signin() {
+      if(this.submit){
+        this._router.parent.navigateByUrl('/signin?submit=true');
+        return true;
+      }
+      this._router.parent.navigateByUrl('/signin');
     }
 }

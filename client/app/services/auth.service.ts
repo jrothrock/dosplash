@@ -31,6 +31,9 @@ export class AuthService {
             if(data.json().success){
                 console.log(data.json());
                 window.localStorage.setItem('user', data.json().data.user);
+                window.localStorage.setItem('email', data.json().data.email);
+                window.localStorage.setItem('first', data.json().data.first);
+                window.localStorage.setItem('last', data.json().data.last);
                 window.localStorage.setItem('token', data.json().data.token);
                 this.isLoggedin = true; 
                 resolve(true);
@@ -51,14 +54,17 @@ export class AuthService {
     register(user) {
         console.log(user);
         return new Promise((resolve, reject) => {
-        var creds = "email=" + user.email + "&username=" + user.username + "&password=" + user.password;
+        var creds = "firstname=" + user.firstname + "&lastname=" + user.lastname + "&email=" + user.email + "&username=" + user.username + "&password=" + user.password;
         console.log(creds);
         var headers = new Headers();
         headers.append('Content-Type', 'application/x-www-form-urlencoded');
         this._http.post('http://localhost:3000/auth/adduser', creds, {headers: headers}).subscribe(data => {
            if(data.json().success){
                console.log(data.json());
-               window.localStorage.setItem('user', data.json().data.user)
+               window.localStorage.setItem('user', data.json().data.user);
+               window.localStorage.setItem('email', data.json().data.email);
+               window.localStorage.setItem('first', data.json().data.first);
+               window.localStorage.setItem('last', data.json().data.last);
                window.localStorage.setItem('token', data.json().data.token);
                resolve(true);
            }
