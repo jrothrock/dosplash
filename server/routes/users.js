@@ -15,25 +15,37 @@ module.exports = function(app) {
 
 	app.post('/auth/logout', authActions.logOut);
 
-	app.get('/api/getinfo', authActions.getinfo);
-
 	//some semi serious call back hell. Will move later.	
 	//this post is really a get - will be changed later.
 	app.post('/api/user', function (req, res){
+		var currentuserId = false;
+    	if(req.headers.authorization.split(' ')[1]){
+      		var token = req.headers.authorization.split(' ')[1];
+      		currentuserId = jwt.decode(token, config.secret);
+    	}
+		var photoType = req.headers.type;
+		console.log(photoType);
 		User.findOne({username: req.headers.username}, function(err, user) {
 			console.log(user);
 			var photosSet = [];
-			if(user.photos.length){
+			if(photoType === 'photos'){ user.photoType = user.photos } else { user.photoType = user.likes }
+			if(user.photoType.length){
 				for(var i = 0; i < user.photos.length;i++){
 					Photo.findById(user.photos[i], function(err, photo){
 						console.log(photo);
-						var buff = new Buffer(photo.img.data).toString('base64');
-						console.log(buff);
-						photosSet.push(buff);
+						var thisphoto = []
+						thisphoto.push(photo.user);
+						var data = { data: new Buffer(photo.img.data).toString('base64')}
+						thisphoto.push(data);
+						console.log(thisphoto);
+						thisphoto.push(photo.likes.num);
+						thisphoto.push(photo.id);
+						if(photo.likes.users.indexOf(currentuserId.key) !== -1){ thisphoto.push(true);}
+						photosSet.push(thisphoto);
 						console.log("photos " + photosSet + " photos");
 						console.log(i);
 						console.log(user.photos.length);
-						if(photosSet.length == (user.photos.length)){
+						if(photosSet.length === (user.photos.length)){
 							res.send({
 								firstname: user.firstname,
 								lastname: user.lastname,
@@ -42,6 +54,8 @@ module.exports = function(app) {
 								website: user.website,
                                 location: user.location,
                                 bio: user.bio,
+                                photosLength: user.photos.length,
+                                likesLength: user.likes.length,
 								photos: photosSet
 							})
 						}
@@ -54,6 +68,11 @@ module.exports = function(app) {
 					lastname: user.lastname,
 					username: user.username,
 					email: user.email,
+					website: user.website,
+                    location: user.location,
+                    bio: user.bio,
+                    photosLength: user.photos.length,
+                    likesLength: user.likes.length,
 					photos: false
 				})
 			}
@@ -68,11 +87,11 @@ module.exports = function(app) {
 		var userId = jwt.decode(token, config.secret);
 		console.log(userId);
 		var user = User.findOneAndUpdate(
-            userId.key,
+            {_id: userId.key},
             { $set: { website : req.body.website, location : req.body.location, bio: req.body.bio}},
-            {returnNewDocument: true},
+            {new: true},
             function(err, doc){
-            	if(err) {console.log(err)}
+            	if(err) console.log(err);
 
             	res.send({
             		success:true,

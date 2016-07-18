@@ -9,22 +9,17 @@ import { RouteParams, Router }  from 'angular2/router';
 
 export class ProfileFormComponent {
 	model:UserProfile;
-	// noUser: boolean = false;
 	firstname:string = '';
 	lastname:string = '';
 	
 	constructor(private _params: RouteParams, private _http: Http, private _router: Router){
-		if(localStorage.getItem('user')){
+		if(localStorage.getItem('user') === _params.get('id')){
 			this.model = new UserProfile('','','');
 			this.firstname = localStorage.getItem('first');
 			this.lastname = localStorage.getItem('last');
-		// 	console.log(_params.get('id'));
-		// 	if(!_params.get('id')) this.noUser = true;
-		// 	if(this.noUser){
-		// 		this._router.parent.navigateByUrl('/');
-		// 	} else {
-		// 	this._router.parent.navigateByUrl('/');
-		// }
+			console.log(_params.get('id'));
+	  } else{
+	  	this._router.parent.navigateByUrl('/?message=unauthorized');
 	  }
 	}
 	handleSubmit = function (model) {
@@ -39,8 +34,7 @@ export class ProfileFormComponent {
         console.log(creds);
         this._http.post('http://localhost:3000/api/userInfo', creds, {headers: headers}).subscribe(data => {
         	if(data.json().success){
-        		// this._router.navigate(['Profile', {id:localStorage.getItem('username')}]);
-        		this._router.navigate(['Home']);
+        		this._router.navigate(['Profile', {id:localStorage.getItem('user')}]);
         	}
         });
 	}

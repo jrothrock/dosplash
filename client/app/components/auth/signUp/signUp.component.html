@@ -22,19 +22,19 @@
               <input id="lastname" type="text" class="form-control" placeholder="Lastname" ngControl="lastname">
             </div>
 
+            <div class="form-group" [ngClass]="{ 'has-error' : !username.valid && username.dirty }">
+              <label class="control-label" for="username">Username <span style='color:grey; font-size: 0.8em'>only letters, numbers and underscores.</span></label>
+              <em *ngIf="username.hasError('required') && username.touched && username.dirty">Required</em>
+              <em *ngIf="username.hasError('pattern') && username.touched && username.dirty">Enter a valid username</em>
+              <input id="username" type="text" class="form-control" placeholder="Username" ngControl="username">
+            </div>
+
             <div class="form-group" [ngClass]="{ 'has-error' : (!email.valid && email.touched && email.dirty) || error }">
               <label class="control-label" for="email">Email</label>
               <em *ngIf="email.hasError('required') && email.touched && email.dirty">Required</em>
               <em *ngIf="email.hasError('pattern') && email.touched && email.dirty">Enter a valid email address</em>
               <em *ngIf="error">Email already in use</em>
               <input id="email" type="text" class="form-control" placeholder="Email" ngControl="email">
-            </div>
-
-            <div class="form-group" [ngClass]="{ 'has-error' : !username.valid && username.dirty }">
-              <label class="control-label" for="username">Username <span style='color:grey; font-size: 0.8em'>only letters, numbers and underscores.</span></label>
-              <em *ngIf="username.hasError('required') && username.touched && username.dirty">Required</em>
-              <em *ngIf="username.hasError('pattern') && username.touched && username.dirty">Enter a valid username</em>
-              <input id="username" type="text" class="form-control" placeholder="Username" ngControl="username">
             </div>
 
             <div class="form-group" [ngClass]="{ 'has-error' : !password.valid && password.touched && password.dirty }">

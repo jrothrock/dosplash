@@ -27,6 +27,7 @@ var storage = multer.diskStorage({
 
 
 module.exports = function(app) {
+  
     /*
     This code would be used if wanting to pull photos from the filesystem instead of the database - need to uncomment code is 
     the photos component as well.
@@ -41,6 +42,12 @@ module.exports = function(app) {
   */
 
   app.get('/api/photos', function (req, res) {
+    var userId = false;
+    if(req.headers.authorization.split(' ')[1]){
+      var token = req.headers.authorization.split(' ')[1];
+      userId = jwt.decode(token, config.secret);
+    }
+    console.log(userId);
     var photos = Photo.find({}, function(err, photos) {
       console.log(photos);
       if(photos.length != 0){
@@ -49,13 +56,16 @@ module.exports = function(app) {
           var photo = [];
           photo.push(photos[i].user);
           photo.push(new Buffer(photos[i].img.data).toString('base64'));
+          photo.push(photos[i]._id);
+          photo.push(photos[i].likes.num);
+          if(photos[i].likes.users.indexOf(userId.key) !== -1){ photo.push(true);}
           photosData.push(photo);
         }
         res.json({info: 'it worked',
           photos: photosData
         });
       }else{
-        res.json({info: 'it worked',
+        res.json({
           photos: false
         });
       }
@@ -92,7 +102,7 @@ module.exports = function(app) {
 
            console.log(photoUser);
 
-           //pushing the whole array would be much simpler.
+          //pushing the whole array would be much simpler.
           newPhoto.user.data.firstname = photoUser.firstname;
           newPhoto.user.data.lastname = photoUser.lastname;
           newPhoto.user.data.email = photoUser.email;
@@ -120,7 +130,7 @@ module.exports = function(app) {
                 }
             });
           User.findOneAndUpdate(
-            user._id,
+            {_id: user._id},
             {$push: {"photos": newPhoto._id}},
             {upsert:true, new: true},
             function(err,model){
@@ -131,8 +141,97 @@ module.exports = function(app) {
     });
   });
 
+  app.post('/api/vote', function (req, res) {
+    var photoId = req.body.photo;
+    console.log('photoid = ' + photoId);
+    var type = req.body.type; //will be either true(voted) or false(not-voted)
+    console.log(type);
+    console.log(typeof type);
+    var token = req.headers.authorization.split(' ')[1];
+    var userId = jwt.decode(token, config.secret);
+    User.findOne({
+        _id: userId.key
+      }, function(err, user){
+        if (err) throw err;
+        if(!user) {
+          res.json({
+              destroy: true
+          })
+        }
+        else {
+          console.log('photoId = ' + photoId);
+          console.log('type2 = ' + type);
+          if(type === 'false'){
+            User.findOneAndUpdate(
+              {
+                 _id: user.id,
+                'likes': {$ne: photoId}
+              },
+              {$push: {'likes': photoId}},
+              {upsert: true, new:true},
+              function(err,dbRes){
+                if(err) console.log(err);
+                console.log(dbRes);
+              }
+            )
+
+            Photo.findOneAndUpdate(
+              {
+                _id: photoId,
+                'likes.users': {$ne: user.id}
+              },
+              {
+                $inc: {'likes.num': 1},
+                $push: {'likes.users': user.id}
+              },
+              {upsert: true,new:true},
+              function(err,dbRes){
+                if(err) console.log(err);
+                console.log(dbRes);
+                res.json({success:true,
+                  type: 'upvote',
+                  data: dbRes
+                });
+              }
+            )
+          }
+          else if(type === 'true'){
+            User.findOneAndUpdate(
+              {_id: user.id},
+              { $pull: { 'likes': photoId } },
+              {new:true},
+              function(err,dbRes){
+                if(err) console.log(err);
+                console.log(dbRes);
+              }
+            )
+            Photo.findOneAndUpdate(
+              {
+                _id: photoId,
+              },
+              {
+                $inc: {'likes.num': -1},
+                $pull: {'likes.users': user.id}
+              },
+              {upsert: true,new:true},
+              function(err,dbRes){
+                console.log(dbRes);
+                if(err) console.log(err);
+                res.json({success:true,
+                  type: 'downvote',
+                  data: dbRes
+                });
+              }
+            )
+          } else{
+            console.log('else up in this bitch');
+          }
+        }
+      }
+    );
+  });
+
 	app.get('/*', function(req,res) {
 		res.sendFile(path.resolve('client/index.html'));
 	});
-
 }

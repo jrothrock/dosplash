@@ -23,11 +23,11 @@ export class SubmitComponent {
         this.makeFileRequest("http://localhost:3000/api/upload", [], this.filesToUpload).then((result) => {
             console.log(result);
             if(result.success){
-                this._router.parent.navigateByUrl('?submit=true');
+                this._router.parent.navigateByUrl('?message=submit');
             }
             else if(result.destroy){
                 window.localStorage.clear();
-                this._router.parent.navigateByUrl('?submit=out')
+                this._router.parent.navigateByUrl('?message=false')
             }
             else{
                 this._router.parent.navigateByUrl('/submit?submit=failed');

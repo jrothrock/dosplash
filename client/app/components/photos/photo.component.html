@@ -3,14 +3,14 @@
 <em *ngIf="registered" class='col-md-6 col-md-offset-3 text-center alert alert-success' style='margin-top:40px;font-size: 16px;'>Welcome, {{firstname}} {{lastname}}.</em>
 <em *ngIf="noPhotos" class='col-md-6 col-md-offset-3 text-center' style='margin-top: 140px;font-size: 16px'>No photos, be the first to add one!</em>
 <div style='margin-top:6%'>
-	<div class="container-fluid" style='margin-bottom:20%' *ngFor="#photo of photos">
+	<div class="container-fluid" style='margin-bottom:20%' *ngFor="#photo of photos;#i = index">
 		<div class="col-md-6 col-sm-12 col-xs-6 col-md-offset-3 col-xs-offset-3">
 		    <div class="thumbnail_container">
 		      	<div class="thumbnail">
 					<img src="{{photo.photo}}" />
 				</div>
 
-				<div class='text-center'><a (click)='userLink(photo.user.data.username)'style='cursor:pointer'>{{photo.user.data.firstname}} {{photo.user.data.lastname}}</a></div>
+				<div class='text-center'><button (click)="like(photo.photoID, i, photo.liked)" [ngClass]="{ 'liked' : photo.liked }" id='likes-button-{{i}}' class="btn btn-default" style="float:left"><i id='icon-likes-{{i}}' [ngClass]="{ 'liked-icon' : photo.liked }" class="fa fa-heart" aria-hidden="true"></i> <span id='likes-{{i}}'>{{photo.likes}}</span></button><a (click)='userLink(photo.user.data.username)' style='cursor:pointer;text-decoration: underline;'>{{photo.user.data.firstname}} {{photo.user.data.lastname}}</a><button (click)="download(photo.photo)" class="btn btn-default" style="float:right">Download</button></div>
 			</div>
 		</div>
 	</div>

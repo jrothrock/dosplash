@@ -69,7 +69,7 @@ export class SignUpComponent {
                  this._router.navigate(['Submit']);
                  return true;
                }
-                this._router.parent.navigateByUrl('/?submit=register');
+                this._router.parent.navigateByUrl('/?message=register');
                 return true;
             }
             this.error = true;

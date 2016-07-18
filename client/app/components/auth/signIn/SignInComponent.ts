@@ -35,7 +35,7 @@ export class SignInComponent {
                     this._router.navigateByUrl('/submit');
                     return true;
                 } 
-                this._router.navigateByUrl('/');
+                this._router.navigateByUrl('/?message=login');
                 return true;
             }
             this.error = true;      

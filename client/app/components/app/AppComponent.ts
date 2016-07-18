@@ -34,10 +34,9 @@ import { ProfileFormComponent } from '../profiles/profileForm/ProfileFormCompone
 
 
 export class AppComponent {
-    username: string = '';
+    navUsername: string = '';
     constructor (private _router: Router, public _auth: AuthService) {
-        this.username =  localStorage.getItem('user');
-        console.log(this.username);
+        console.log(this.navUsername);
     }
 
     isLoggedIn = this._auth.isLoggedIn;
@@ -45,12 +44,13 @@ export class AppComponent {
     logout = function () {
         this._auth.logout()
             .then(() => { 
-                    this._router.navigate(['Home']);
+                    this._router.navigateByUrl('/?message=logout');
                 }
             );
     }
 
     profile(){
-        this._router.navigate(['Profile', {id:this.username}]);
+        this.navUsername =  localStorage.getItem('user');
+        this._router.navigate(['Profile', {id:this.navUsername}]);
     }
 }

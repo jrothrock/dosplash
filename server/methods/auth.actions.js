@@ -29,6 +29,7 @@ var functions = {
                         user.token = token;
                         user.password = req.body.password;
                         user.save(function (err, dbRes) {
+                            console.log(dbRes);
                             dbRes.password = undefined;
                             dbRes.token = undefined;
                             res.json({
@@ -80,6 +81,7 @@ var functions = {
                 password: req.body.password,
                 token: undefined
             });
+            console.log(newUser.username)
             console.log("Create token with user id", newUser._id);
             console.log(config.secret);
              console.log(config.jwtExpiry);
@@ -143,17 +145,6 @@ var functions = {
             message: 'Logged Out', 
             data: {success: true}
         });
-    },
-
-    getinfo: function(req, res){
-        if(req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
-            var token = req.headers.authorization.split(' ')[1];
-            var decodedtoken = jwt.decode(token, config.secret);
-            return res.json({success: true, msg: 'hello '+decodedtoken.name});
-        }
-        else {
-            return res.json({success:false, msg: 'No header'});
-        }
     }
 };
 

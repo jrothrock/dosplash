@@ -18,8 +18,7 @@ var UserSchema = new Schema({
     },
     username: {
         type: String,
-        required: true,
-        select: false
+        required: true
     },
     password: {
         type: String,
@@ -29,7 +28,14 @@ var UserSchema = new Schema({
             type: String,
             select: false
     },
-    photos : [{ type: Schema.Types.ObjectId, ref: 'Photo' }],
+    photos : [{ 
+            type: Schema.Types.ObjectId, 
+            ref: 'Photo' 
+    }],
+    likes : [{ 
+            type: Schema.Types.ObjectId, 
+            ref: 'Photo' 
+    }],
     website : {
             type: String,
     },
@@ -38,7 +44,7 @@ var UserSchema = new Schema({
     },
     bio : {
             type: String,
-    },
+    }
 });
  
 UserSchema.pre('save', function (next) {

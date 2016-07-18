@@ -2,12 +2,12 @@
 <div class='text-center'>
 	<h2 style='font-size:30px;'>{{firstname}} {{lastname}}</h2>
 </div>
-<div style='float:right;margin-top:-45px;margin-right: 100px;'>
+<div *ngIf="currentUser" style='float:right;margin-top:-45px;margin-right: 100px;'>
 	<button class="btn btn-default" style='color:#999;font-family:helvetica;font-weight:550;font-size:12px' (click)="form()">EDIT PROFILE</button>
 </div>
 <div style='color:#999;font-size:1em' class='text-center'>
-{{location}}  <a href={{website}}>{{website}}</a>
-	<div style='color:#111;font-size:1.2em;margin-top:5px;'>
+<i *ngIf="location" class="fa fa-map-marker" style='margin-left:10px;' aria-hidden="true"></i> {{location}}   <i *ngIf="webiste"class="fa fa-globe" style='margin-left: 20px' aria-hidden="true"></i> <a href={{website}}>{{website}}</a>
+	<div *ngIf="website" style='color:#111;font-size:1.2em;margin-top:5px;'>
 		{{bio}}
 	</div>
 </div>
@@ -15,13 +15,14 @@
 	<span style='cursor:pointer;text-decoration: underline'><a (click)="submit()"> Submit a photo </a></span>
 </div>
 <div style='margin-top:6%'>
-	<h3 class='text-center'> Photos({{photoCounter}}) </h3>
-	<div class="container-fluid" style='margin-bottom:20%' *ngFor="#photo of photos">
+	<span class='col-md-6 col-md-offset-3'><a [ngClass]="{ 'selected-view' : photoSelected && !likeSelected }" (click)='photoView()'>{{photoCounter}} Photos  </a><a [ngClass]="{ 'selected-view' : !photoSelected && likeSelected }" (click)='likeView()'>  {{likeCounter}} Likes</a> </span>
+	<div class="container-fluid" style='margin-bottom:20%' *ngFor="#photo of photos;#i = index">
 		<div class="col-md-6 col-sm-12 col-xs-6 col-md-offset-3 col-xs-offset-3">
 		    <div class="thumbnail_container">
 		      	<div class="thumbnail">
-					<img src="{{photo}}" />
+					<img src="{{photo.photo}}" />
 				</div>
+				<div class='text-center'><button (click)="like(photo.photoID, i, photo.liked)" [ngClass]="{ 'liked' : photo.liked }" id='likes-button-{{i}}' class="btn btn-default" style="float:left"><i id='icon-likes-{{i}}' [ngClass]="{ 'liked-icon' : photo.liked }" class="fa fa-heart" aria-hidden="true"></i> <span id='likes-{{i}}'>{{photo.likes}}</span></button><a (click)='userLink(photo.user.username)' style='cursor:pointer;text-decoration: underline;'>{{photo.user.name}}</a><button (click)="download(photo.photo)" class="btn btn-default" style="float:right">Download</button></div>
 			</div>
 		</div>
 	</div>
