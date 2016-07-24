@@ -24,26 +24,28 @@ export class SignUpComponent {
   password: Control;
   submitAttempt: boolean = false;
   submit: boolean;
+  success: boolean = false;
+  error: boolean = null;
 
 	constructor(private http: Http, private builder: FormBuilder, private _authService: AuthService, private _router: Router, private _params: RouteParams) {
+  }
+
+  ngOnInit(){
     this.firstname = new Control('', Validators.compose([Validators.required, Validators.pattern('^[a-zA-Z-]*$')]));
     this.lastname = new Control('', Validators.compose([Validators.required, Validators.pattern('^[a-zA-Z-]*$')]));
     this.username = new Control('', Validators.compose([Validators.required, Validators.pattern('^[a-zA-Z0-9_]*$')]));
     this.email = new Control('', Validators.compose([Validators.required, Validators.pattern('[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?')]));
     this.password = new Control('', Validators.compose([Validators.required, Validators.minLength(6)]));
 
-    this.registrationForm = builder.group({
+    this.registrationForm = this.builder.group({
       firstname: this.firstname,
       lastname: this.lastname,
       username: this.username,
       email: this.email,
       password: this.password
     });
-    this.submit = !!_params.get('submit'); //cast to boolean for 'need to login' message in template
+    this.submit = !!this._params.get('submit'); //cast to boolean for 'need to login' message in template
   }
-    submitted = false;
-    success = false;
-    error = null;
 
     registerUser(User) {
         this.submitAttempt = true;
@@ -56,14 +58,11 @@ export class SignUpComponent {
 
         
         console.log(User);
-        this.submitted = true;
-        this.success = false;
         this.error = null;
         this._authService.register(User)
         	.then(data => {
         	console.log(data);
             if(data){
-            	this.success = true; 
                this.error = false;
                if(this.submit){
                  this._router.navigate(['Submit']);

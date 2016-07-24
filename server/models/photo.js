@@ -2,8 +2,10 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var User = require('./user');
 
-var photoSchema = mongoose.Schema({
-
+var PhotoSchema = mongoose.Schema({
+    name: {
+        type: String
+    },
     img: { 
     		data: Buffer, 
     		contentType: String 
@@ -26,7 +28,15 @@ var photoSchema = mongoose.Schema({
     			 username: String,
     			 user_id: Schema.Types.ObjectId
 		  	}
+	},
+	created_at: {
+		type: Date
 	}
 });
 
-module.exports = mongoose.model('Photo', photoSchema);
+PhotoSchema.pre('save', function (next) {
+    this.created_at = new Date();
+    next();
+});
+
+module.exports = mongoose.model('Photo', PhotoSchema);

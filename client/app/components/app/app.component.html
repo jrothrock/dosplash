@@ -3,14 +3,15 @@
 	  <div class="navbar-container">
 	     <ul class="nav navbar-nav navbar-left">
 	      <li><a [class.active]="_router.isRouteActive(_router.generate(['/Home']))" [routerLink]="['Home']">Featured</a></li>
+	      <li><a [class.active]="_router.isRouteActive(_router.generate(['/New']))"  [routerLink]="['New']">New</a></li>
 	    </ul>
 	    <ul class="nav navbar-nav navbar-right">
 	      <li *ngIf="!isLoggedIn()">
 	      <a [class.active]="_router.isRouteActive(_router.generate(['/SignIn']))" [routerLink]="['SignIn']">Sign In</a>
 	      </li>
-	      <li class='btn btn-success btn-social' [routerLink]="['SignUp']" *ngIf="!isLoggedIn()"><a [class.active]="_router.isRouteActive(_router.generate(['/SignUp']))" class='btn-social-text'>Join</a></li>
+	      <li class='btn btn-success btn-social' [class.active]="_router.isRouteActive(_router.generate(['/SignUp']))" [routerLink]="['SignUp']" *ngIf="!isLoggedIn()"><a class='btn-social-text'>Join</a></li>
 	      <li class='sign-out' *ngIf="isLoggedIn()"><a (click)="logout()">Sign Out</a></li>
-	      <li class='sign-out' *ngIf="isLoggedIn()"><a [class.active]="_router.isRouteActive(_router.generate(['/Profile', {id: navUsername}]))" (click)="profile()">Profile</a></li>
+	      <li class='profile' style='cursor: pointer'*ngIf="isLoggedIn()"><a [class.active]="_router.isRouteActive(_router.generate(['/Profile', 'Profile', {id: navUsername}]))" (click)="profile()">Profile</a></li>
 	    </ul>
 	  </div>
 	</nav>

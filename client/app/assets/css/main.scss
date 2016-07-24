@@ -41,25 +41,64 @@ a {
 		color: #111;
 		font-weight: 1000;
 	}
-	&.active{
+
+	&.router-link-active, &.active{
 		background-color: transparent;
 		color: #111;
-		font-weight: 1000;
+		font-weight: 1000;	
 	}
 }
 
+.navbar {
+	&.router-link-active{
+			
+	}
+}
 .btn-social{
 	margin-top: 8px;
 	height: 30px;
 	width: 60px;
 	border-radius: 5px;
 	margin-right: 20px;
-		font-family: 'helvetica';
+	font-family: 'helvetica';
 	font-size: 11px;
 	font-weight: 800;
 	line-height: 32px;
+	&.router-link-active{
+		background-color: transparent !important;
+		color: #111 !important;
+		box-shadow: none;
+		-webkit-box-shadow: none;
+		/* goes to .btn-socials-text's link */
+		> a {
+			color: #111 !important;
+		}
+	}
+	&:hover{
+    	background-color: transparent;
+		> a {
+			color: #111 !important;
+		}
+    }
+    &:focus{
+		background-color: transparent;
+		box-shadow: none;
+		-webkit-box-shadow: none;
+		> a {
+			color: #111 !important;
+		}
+	}
+    &:active{
+    	background-color: transparent !important;
+		font-weight: 1000;
+		box-shadow: none;
+		-webkit-box-shadow: none;
+		> a {
+			color: #111 !important;
+		}
+    }
 }
-/* Change text so that it is not beging centered by margins, but by positioning*/
+
 .btn-social-text{
 	margin-top: -15px;
 	margin-left: -9px;

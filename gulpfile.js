@@ -108,7 +108,7 @@ gulp.task('build', function(callback){
 
 gulp.task('start-server', ['build', 'watch'], function (cb) {
 	if(!started){
-		exec('node dist/server.js', {maxBuffer: 5000*2048}, function (err, stdout, stderr) {
+		exec('node dist/server.js', {maxBuffer: 10000*5000}, function (err, stdout, stderr) {
 	    console.log(stdout);
 	    console.log("stderr" + stderr);
 	    cb(err);

@@ -1,4 +1,4 @@
-import { Component } from 'angular2/core';
+import { Component, OnInit } from 'angular2/core';
 import {Http, Headers} from 'angular2/http';
 import {UserProfile} from '../../../models/user.profile';
 import { RouteParams, Router }  from 'angular2/router';
@@ -13,16 +13,20 @@ export class ProfileFormComponent {
 	lastname:string = '';
 	
 	constructor(private _params: RouteParams, private _http: Http, private _router: Router){
-		if(localStorage.getItem('user') === _params.get('id')){
+	}
+
+	ngOnInit(){
+		if(localStorage.getItem('user') === this._params.get('id')){
 			this.model = new UserProfile('','','');
 			this.firstname = localStorage.getItem('first');
 			this.lastname = localStorage.getItem('last');
-			console.log(_params.get('id'));
-	  } else{
-	  	this._router.parent.navigateByUrl('/?message=unauthorized');
-	  }
+			console.log(this._params.get('id'));
+	    } else {
+	  		this._router.parent.navigateByUrl('/?message=unauthorized');
+	  	}
 	}
-	handleSubmit = function (model) {
+
+	handleSubmit(model) {
 		var headers = new Headers({
             'Content-Type': 'application/x-www-form-urlencoded',
             'Authorization': 'Bearer ' + localStorage.getItem('token')

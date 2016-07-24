@@ -1,16 +1,18 @@
-import { Component } from 'angular2/core';
+import { Component, OnInit } from 'angular2/core';
 import { HTTP_PROVIDERS } from 'angular2/http';
 import 'rxjs/Rx';   // Load all features
 import { Router, ROUTER_PROVIDERS, RouteConfig, ROUTER_DIRECTIVES, CanActivate } from 'angular2/router';
 import {AuthService} from '../../services/auth.service';
 
-import { HomeComponent } from '../home/HomeComponent';
+import { FeaturedComponent } from '../home/featured/FeaturedComponent';
 import { SignInComponent } from '../auth/signIn/SignInComponent';
 import { PhotoComponent } from '../photos/PhotoComponent';
 import { SignUpComponent } from '../auth/signUp/SignUpComponent';
 import { SubmitComponent } from '../submit/SubmitComponent';
 import { ProfileComponent } from '../profiles/profile/ProfileComponent';
 import { ProfileFormComponent } from '../profiles/profileForm/ProfileFormComponent';
+import { NewComponent } from '../home/new/NewComponent';
+
 @Component({
     selector: 'my-app',
     templateUrl: 'app/components/app/app.component.html',
@@ -21,13 +23,12 @@ import { ProfileFormComponent } from '../profiles/profileForm/ProfileFormCompone
 })
 
 @RouteConfig([
-    //May want to update the first route params (looks ugly).
-    { path: '/', name: 'Home', component: HomeComponent, useAsDefault: true },
+    { path: '/', name: 'Home', component: FeaturedComponent, useAsDefault: true },
+    { path: '/new', name: 'New', component: NewComponent },
     { path: '/signin', name: 'SignIn', component: SignInComponent},
     { path: '/signup', name: 'SignUp', component: SignUpComponent},
-    { path: '/photos/:id', name: 'PhotoDetail', component: PhotoComponent},
     { path: '/submit', name: 'Submit', component: SubmitComponent},
-    { path: '/:id', name: 'Profile', component: ProfileComponent},
+    { path: '/...', name: 'Profile', component: ProfileComponent},
     { path: '/:id/form', name: 'ProfileForm', component: ProfileFormComponent},
     { path: '/**', redirectTo: ['Home'] }
 ])
@@ -35,13 +36,18 @@ import { ProfileFormComponent } from '../profiles/profileForm/ProfileFormCompone
 
 export class AppComponent {
     navUsername: string = '';
-    constructor (private _router: Router, public _auth: AuthService) {
-        console.log(this.navUsername);
-    }
-
+    newString:string = 'new';
     isLoggedIn = this._auth.isLoggedIn;
 
-    logout = function () {
+    constructor (private _router: Router, public _auth: AuthService) {
+    }
+
+    ngOnInit(){
+        this.navUsername =  localStorage.getItem('user');
+    }
+
+
+    logout() {
         this._auth.logout()
             .then(() => { 
                     this._router.navigateByUrl('/?message=logout');
@@ -50,7 +56,7 @@ export class AppComponent {
     }
 
     profile(){
-        this.navUsername =  localStorage.getItem('user');
-        this._router.navigate(['Profile', {id:this.navUsername}]);
+        console.log(this.navUsername);
+        this._router.navigate(['Profile', 'Profile', {id:this.navUsername}]);
     }
 }

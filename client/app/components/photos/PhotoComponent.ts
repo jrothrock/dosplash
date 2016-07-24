@@ -1,9 +1,9 @@
-import { Component } from 'angular2/core';
+import { Component, OnInit } from 'angular2/core';
 import { Router, RouteParams }  from 'angular2/router';
 import {Http, Headers} from 'angular2/http';
 
 //cache the photos to minimize db requests
-var photoData = {
+var photoFeaturedData = {
     	allPhotos: [],
     	setData: function(data1){
     		this.allPhotos = data1;
@@ -11,12 +11,26 @@ var photoData = {
     	},
 
     	getData: function(){
-    		return this.allPhotos
+    		return this.allPhotos;
     	},
 }
+
+var photoNewData = {
+    	allPhotos: [],
+    	setData: function(data1){
+    		this.allPhotos = data1;
+    		console.log('allPhotos = ' + this.allPhotos);
+    	},
+
+    	getData: function(){
+    		return this.allPhotos;
+    	},
+}
+
 var getToken = function() {
         return localStorage.getItem('token') || '';
 }
+
 var voteData = {
 	type: null,
 	setType: function(newtype){
@@ -27,11 +41,14 @@ var voteData = {
 		return this.type;
 	}
 }
+
 @Component({
 	selector: "PhotoDetail",
+	inputs: ['parent'],
     templateUrl: 'app/components/photos/photo.component.html',
 })
 export class PhotoComponent {
+	parent: boolean = false; //is false if route is featured (/) and new if route is new (/new)
 	photos: any = [];
 	noPhotos: boolean;
 	photosSet: any;
@@ -41,6 +58,7 @@ export class PhotoComponent {
 	registered: boolean = false;
 	firstname: string = '';
 	lastname: string = '';
+	signIn: boolean = false;
 
 	/*
 	This constructor would be used if pulling photos from the filesystem - uncomment this code
@@ -61,31 +79,36 @@ export class PhotoComponent {
 
 
     constructor(private _http: Http, private _params: RouteParams, private _router: Router) {
-    	if(_params.get('message') === 'submit'){
+    }
+
+    ngOnInit(){
+    	console.log(this.parent);
+    	if(this._params.get('message') === 'submit'){
     		this.submit = true;
     		this.change = true;
-    	} else if (_params.get('message') === 'false'){
+    	} else if (this._params.get('message') === 'false'){
     		this.loggedOut = true;
     		this.change = true;
     	}
- 		else if(_params.get('message') === 'login'){
+ 		else if(this._params.get('message') === 'login'){
  			this.change = true;
  		}
- 		else if(_params.get('message') === 'logout'){
+ 		else if(this._params.get('message') === 'logout'){
  			this.change = true;
  		}
-    	else if (_params.get('message') === 'register'){
+    	else if (this._params.get('message') === 'register'){
     		this.registered = true;
     		this.firstname = localStorage.getItem('first');
     		this.lastname = localStorage.getItem('last');
     		this.change = true;
     	}
-    	console.log(photoData.getData().length);
-    	if(photoData.getData().length === 0 || this.change){
+    	console.log(photoFeaturedData.getData().length);
+    	if(this.change || (!this.parent && photoFeaturedData.getData().length === 0) || (this.parent && photoNewData.getData().length === 0)){
     		this.photosSet = [];
     		var headers = new Headers({
             	'Content-Type': 'application/x-www-form-urlencoded',
-            	'Authorization': 'Bearer ' + getToken()
+            	'Authorization': 'Bearer ' + getToken(),
+            	'Filter': this.parent
         	});
 			this._http.get('http://localhost:3000/api/photos', {headers: headers}).subscribe(data => {
 				console.log(data.json());
@@ -96,17 +119,22 @@ export class PhotoComponent {
 					this.noPhotos = false;
 					for(var i = 0; i < data.json().photos.length; i++){
 						var indPhoto = {
-							user: data.json().photos[i][0],
-							photo: 'data:image/jpeg;base64,' + data.json().photos[i][1],
-							photoID: data.json().photos[i][2], 
-							likes: data.json().photos[i][3],
-							liked: data.json().photos[i][4] || false
+							name: data.json().photos[i][0],
+							user: data.json().photos[i][1],
+							photo: 'data:image/jpeg;base64,' + data.json().photos[i][2],
+							photoID: data.json().photos[i][3], 
+							likes: data.json().photos[i][4],
+							liked: data.json().photos[i][5] || false
 						}
 						console.log(indPhoto);
 						this.photosSet.push(indPhoto);
 						if(i === (data.json().photos.length - 1)){
 							console.log("photoset = " + this.photosSet);
-					        photoData.setData(this.photosSet);
+					        if(this.parent){
+					        	photoNewData.setData(this.photosSet);
+					        } else {
+					        	photoFeaturedData.setData(this.photosSet);
+					        }
 					        this.photos = this.photosSet;
 					        console.log('photos ' +  this.photos);
 					        console.log(this.photos.length);
@@ -116,7 +144,11 @@ export class PhotoComponent {
 	        })
 	    }
 	    else{
-	    	this.photos = photoData.getData();
+	    	if(this.parent){
+	    		this.photos = photoNewData.getData();
+	    	} else {
+	    		this.photos = photoFeaturedData.getData();
+	    	}
 	    }
     }
 
@@ -124,13 +156,13 @@ export class PhotoComponent {
     	this._router.parent.navigateByUrl('/' + user);
     }
 
-    download(photo){
+    download(photo, name){
     	//for non IE 
 	    if (!window.ActiveXObject) {
 	        var save = document.createElement('a');
 	        save.href = photo;
 	        save.target = '_blank';
-	        save.download = 'unknown';
+	        save.download = name || 'unknown';
 
 	        var event = document.createEvent('Event');
 	        event.initEvent('click', true, true);
@@ -139,7 +171,7 @@ export class PhotoComponent {
 	    }
 
 	    // for IE
-	    else if ( !! window.ActiveXObject && document.execCommand)     {
+	    else if ( !! window.ActiveXObject && document.execCommand) {
 	        var _window = window.open(photo, '_blank');
 	        _window.document.close();
 	        _window.document.execCommand('SaveAs', true, "unknown")
@@ -175,6 +207,10 @@ export class PhotoComponent {
             	elementIcon.className = 'fa fa-heart';
             	var elementButton = document.getElementById("likes-button-" + index);
             	elementButton.className += 'btn btn-default';
+            }
+            if(!data.json().user && data.json().destroy){
+            	this.signIn = true;
+            	window.localStorage.clear();
             }
         })
 	}

@@ -14,16 +14,8 @@
 <div *ngIf="currentUser" style='margin-top:20px' class='text-center'>
 	<span style='cursor:pointer;text-decoration: underline'><a (click)="submit()"> Submit a photo </a></span>
 </div>
-<div style='margin-top:6%'>
-	<span class='col-md-6 col-md-offset-3'><a [ngClass]="{ 'selected-view' : photoSelected && !likeSelected }" (click)='photoView()'>{{photoCounter}} Photos  </a><a [ngClass]="{ 'selected-view' : !photoSelected && likeSelected }" (click)='likeView()'>  {{likeCounter}} Likes</a> </span>
-	<div class="container-fluid" style='margin-bottom:20%' *ngFor="#photo of photos;#i = index">
-		<div class="col-md-6 col-sm-12 col-xs-6 col-md-offset-3 col-xs-offset-3">
-		    <div class="thumbnail_container">
-		      	<div class="thumbnail">
-					<img src="{{photo.photo}}" />
-				</div>
-				<div class='text-center'><button (click)="like(photo.photoID, i, photo.liked)" [ngClass]="{ 'liked' : photo.liked }" id='likes-button-{{i}}' class="btn btn-default" style="float:left"><i id='icon-likes-{{i}}' [ngClass]="{ 'liked-icon' : photo.liked }" class="fa fa-heart" aria-hidden="true"></i> <span id='likes-{{i}}'>{{photo.likes}}</span></button><a (click)='userLink(photo.user.username)' style='cursor:pointer;text-decoration: underline;'>{{photo.user.name}}</a><button (click)="download(photo.photo)" class="btn btn-default" style="float:right">Download</button></div>
-			</div>
-		</div>
-	</div>
+<em *ngIf="signIn" class='col-md-6 col-md-offset-3 text-center alert alert-warning' style='margin-top:40px;font-size: 16px;'>Please sign in to like photo</em>
+<div style='margin-top:6%' id='profile-photos'>
+	<span class='col-md-6 col-md-offset-3' id='allphotos'><a [ngClass]="{ 'selected-view' : getLinkStyle('/'+username)}" (click)='PhotoLink()'>{{photoCounter}} Photos  </a><a [ngClass]="{ 'selected-view' : getLinkStyle('/'+username+'/likes')}" (click)='LikesLink()'>  {{likeCounter}} Likes</a> </span>
+	<router-outlet></router-outlet>
 </div>

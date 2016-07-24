@@ -1,4 +1,4 @@
-import { Component } from 'angular2/core';
+import { Component, OnInit } from 'angular2/core';
 import { Router, ROUTER_DIRECTIVES, RouteParams }  from 'angular2/router';
 
 @Component({
@@ -8,15 +8,19 @@ import { Router, ROUTER_DIRECTIVES, RouteParams }  from 'angular2/router';
 })
 export class SubmitComponent {
 	filesToUpload: Array<File>;
-     error = false;
-     submit:boolean = false;
+    error:boolean = false;
+    submit:boolean = false;
+
     constructor(private _router: Router, private _params: RouteParams) {
-        this.filesToUpload = [];
-        this.submit = !!_params.get('submit')
     }
 
     public getToken () {
         return localStorage.getItem('token') || '';
+    }
+
+    ngOnInit(){
+        this.filesToUpload = [];
+        this.submit = !!this._params.get('submit')
     }
 
 	upload() {

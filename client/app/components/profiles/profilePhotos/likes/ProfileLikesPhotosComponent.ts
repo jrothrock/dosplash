@@ -1,8 +1,6 @@
 import { Component, OnInit, OnChanges } from 'angular2/core';
-import { Http, Headers } from 'angular2/http';
-import { Router, ROUTER_DIRECTIVES, ROUTER_PROVIDERS, RouteConfig, RouteParams, CanActivate, Location }  from 'angular2/router';
-import { ProfileLikesPhotosComponent } from '../profilePhotos/likes/ProfileLikesPhotosComponent';
-import { ProfilePhotosComponent } from '../profilePhotos/photos/ProfilePhotosComponent';
+import {Http, Headers} from 'angular2/http';
+import { Router, ROUTER_DIRECTIVES, RouteParams }  from 'angular2/router';
 
 var getToken = function() {
         return localStorage.getItem('token') || '';
@@ -19,16 +17,10 @@ var voteData = {
 }
 
 @Component({
-	selector: "Profile",
-    templateUrl: 'app/components/profiles/profile/profile.component.html',
-    directives: [ROUTER_DIRECTIVES]
+	selector: "ProfileLikePhotos",
+    templateUrl: 'app/components/profiles/profilePhotos/likes/profileLikesPhotos.component.html'
 })
-@RouteConfig([
-    { path: '/:id', name: 'Profile', component: ProfilePhotosComponent, useAsDefault: true},
-    { path: '/:id/likes', name: 'Likes', component: ProfileLikesPhotosComponent},
-])
-
-export class ProfileComponent {
+export class ProfileLikesPhotosComponent {
 	photos: any = [];
 	username: string = '';
 	lastname: string = '';
@@ -42,9 +34,10 @@ export class ProfileComponent {
 	currentUser: boolean = null;
 	signIn: boolean = false;
 	photosView: boolean = true;
-	likesView: boolean = false;
+	likesView: boolean = true;
 
-	constructor(private _params: RouteParams, private _http: Http, private _router: Router, private _location: Location){
+
+	constructor(private _params: RouteParams, private _http: Http, private _router: Router){
 	}
 
 	ngOnInit(){
@@ -52,50 +45,64 @@ export class ProfileComponent {
 		var headers = new Headers({
             'Content-Type': 'application/x-www-form-urlencoded',
             'Authorization': 'Bearer ' + getToken(),
-            'username': this._params.get('id') || localStorage.getItem('user'),
+            'username': this._params.get('id'),
             'type': this.likesView || 'photos'
         });
         console.log(headers);
         this.username = this._params.get('id')
         console.log(this.currentUser);
-		this._http.post('http://localhost:3000/api/user/info','', {headers: headers}).subscribe(data => {
+		this._http.post('http://localhost:3000/api/user/photos','', {headers: headers}).subscribe(data => {
 			console.log(data.json());
 			if (data.json().username === localStorage.getItem('user')){this.currentUser = true};
 			console.log(this.currentUser);
-			if(data.json().nouser){
-					this._router.parent.navigateByUrl('/?message=nouser');
-			}else{
-				this.noPhotos = false;
+			if(!data.json().photos){
+					this.noPhotos = true;
 					this.lastname = data.json().lastname;
 					this.firstname = data.json().firstname;
-					this.username = data.json().username;
+					this.photoCounter = data.json().photosLength;
+					this.likeCounter = data.json().likesLength;
+					this.website = data.json().website;
+					this.location = data.json().location;
+					this.bio = data.json().bio;
+					return true;
+			}else{
+				this.noPhotos = false;
+				for(var i = 0; i < data.json().photos.length; i++){
+					var photoData = { 
+									  name: data.json().photos[i][0],
+									  user: {
+									  		  name: data.json().photos[i][1].data.firstname + " " + data.json().photos[i][1].data.lastname,
+									  		  username: data.json().photos[i][1].data.username
+									  },
+									  photo: 'data:image/jpeg;base64,' + data.json().photos[i][2].data, 
+									  likes: data.json().photos[i][3],
+									  photoID: data.json().photos[i][4],
+									  liked: data.json().photos[i][5] || false
+									};
+					this.photos.push(photoData);
+					console.log(this.photos);
+					this.lastname = data.json().lastname;
+					this.firstname = data.json().firstname;
 					this.website = data.json().website;
 					this.location = data.json().location;
 					this.bio = data.json().bio;
 					this.photoCounter = data.json().photosLength;
 					this.likeCounter = data.json().likesLength;
+				}
 			}
 		})
 	}
-	getLinkStyle(path:string):boolean {
-		return this._location.path() === path;
-	}
-	submit(){
-		this._router.parent.navigateByUrl('/submit');
-	}
-	form(){
-		this._router.navigate(['ProfileForm',{id:this.username}]);
-	}
+
 	userLink(user){
     	this._router.parent.navigateByUrl('/' + user);
     }
-    download(photo){
+	download(photo,name){
     	//for non IE 
 	    if (!window.ActiveXObject) {
 	        var save = document.createElement('a');
 	        save.href = photo;
 	        save.target = '_blank';
-	        save.download = 'unknown';
+	        save.download = name || 'unknown';
 
 	        var event = document.createEvent('Event');
 	        event.initEvent('click', true, true);
@@ -146,16 +153,5 @@ export class ProfileComponent {
             	window.localStorage.clear();
             }
         })
-	}
-	PhotoLink(){
-		this._router.parent.navigateByUrl('/' + this.username);
-		this.photosView = true;
-		this.likesView = false;
-	}
-	LikesLink(){
-		this._router.parent.navigateByUrl('/' + this.username + '/likes' );
-		this.photosView = false;
-		this.likesView = true;
-		// this._router.navigate(['Profile', 'Profile', {id:this.username}, 'Likes']);
 	}
 }
