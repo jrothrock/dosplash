@@ -58,8 +58,8 @@ export class SubmitComponent {
                 formData.append("uploads[]", files[i], files[i].name);
             }
             xhr.onreadystatechange = function () {
-                if (xhr.readyState == 4) {
-                    if (xhr.status == 200) {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
                         resolve(JSON.parse(xhr.response));
                     } else {
                         reject(xhr.response);

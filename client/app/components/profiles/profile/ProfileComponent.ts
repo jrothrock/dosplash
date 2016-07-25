@@ -17,10 +17,20 @@ var voteData = {
 		return this.type;
 	}
 }
+var currentUserData = {
+	name: null,
+	setName: function(name){
+		this.name = name;
+	},
+	getName: function(){
+		return this.name;
+	}
+}
 
 @Component({
 	selector: "Profile",
     templateUrl: 'app/components/profiles/profile/profile.component.html',
+    //template: `<router-outlet></router-outlet>`,
     directives: [ROUTER_DIRECTIVES]
 })
 @RouteConfig([
@@ -48,22 +58,37 @@ export class ProfileComponent {
 	}
 
 	ngOnInit(){
-		console.log(this._params.get('id'));
+		// this is the dirtiest monkey patch. location.path() is null the first time, not sure if it's async or not.
+		// This is from using the child route config.
+		console.log('currentUserData = ' + currentUserData.getName());
+		console.log('splitting = ' + this._location.path().split('/').slice(1)[0]);
+		console.log('storeage userLink = ' + localStorage.getItem('userLink'));
+		console.log('storeage user = ' + localStorage.getItem('user'));
+		var userLink = localStorage.getItem('userLink') || false;
+		console.log(this._location.path().split('/').slice(1)[0]);
+		var locationSplit;
+		if(this._location.path().split('/').slice(1)[0]){
+			locationSplit = (this._location.path().split('/').slice(1)[0].charAt(0) === '@')? this._location.path().split('/').slice(1)[0]: false;
+		}
+		console.log('locationSplit = '+ locationSplit);
 		var headers = new Headers({
             'Content-Type': 'application/x-www-form-urlencoded',
             'Authorization': 'Bearer ' + getToken(),
-            'username': this._params.get('id') || localStorage.getItem('user'),
+            'username': locationSplit || userLink || localStorage.getItem('user'),
             'type': this.likesView || 'photos'
         });
-        console.log(headers);
+        currentUserData.setName(userLink);
+        //console.log(this._params.get('id'));
+        //console.log(localStorage.getItem('user'));
+        console.log('these headers = ' + headers);
         this.username = this._params.get('id')
-        console.log(this.currentUser);
+        //console.log(this.currentUser);
 		this._http.post('http://localhost:3000/api/user/info','', {headers: headers}).subscribe(data => {
 			console.log(data.json());
 			if (data.json().username === localStorage.getItem('user')){this.currentUser = true};
-			console.log(this.currentUser);
+			//console.log(this.currentUser);
 			if(data.json().nouser){
-					this._router.parent.navigateByUrl('/?message=nouser');
+					
 			}else{
 				this.noPhotos = false;
 					this.lastname = data.json().lastname;
@@ -74,6 +99,10 @@ export class ProfileComponent {
 					this.bio = data.json().bio;
 					this.photoCounter = data.json().photosLength;
 					this.likeCounter = data.json().likesLength;
+			}
+			if(this.photoCounter === 0){
+				//console.log('photoCounter = '+this.photoCounter);
+				//this.LikesLink();
 			}
 		})
 	}

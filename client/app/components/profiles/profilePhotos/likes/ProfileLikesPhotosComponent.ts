@@ -1,6 +1,6 @@
 import { Component, OnInit, OnChanges } from 'angular2/core';
 import {Http, Headers} from 'angular2/http';
-import { Router, ROUTER_DIRECTIVES, RouteParams }  from 'angular2/router';
+import { Router, ROUTER_DIRECTIVES, RouteParams, Location }  from 'angular2/router';
 
 var getToken = function() {
         return localStorage.getItem('token') || '';
@@ -37,20 +37,30 @@ export class ProfileLikesPhotosComponent {
 	likesView: boolean = true;
 
 
-	constructor(private _params: RouteParams, private _http: Http, private _router: Router){
+	constructor(private _params: RouteParams, private _http: Http, private _router: Router, private _location: Location){
 	}
 
 	ngOnInit(){
-		console.log(this._params.get('id'));
+		console.log('splitting2 = ' + this._location.path().split('/').slice(1)[0]);
+		console.log('storeage2 userLink = ' + localStorage.getItem('userLink'));
+		console.log('storeage2 user = ' + localStorage.getItem('user'));
+		var userLink = localStorage.getItem('userLink') || false;
+		localStorage.removeItem('userLink');
+		console.log(this._location.path().split('/').slice(1)[0]);
+		var locationSplit;
+		if(this._location.path().split('/').slice(1)[0]){
+			locationSplit = (this._location.path().split('/').slice(1)[0].charAt(0) === '@')? this._location.path().split('/').slice(1)[0]: false;
+		}
+		console.log('locationSplit = '+ locationSplit);
 		var headers = new Headers({
             'Content-Type': 'application/x-www-form-urlencoded',
             'Authorization': 'Bearer ' + getToken(),
-            'username': this._params.get('id'),
+            'username': locationSplit || userLink || localStorage.getItem('user'),
             'type': this.likesView || 'photos'
         });
         console.log(headers);
         this.username = this._params.get('id')
-        console.log(this.currentUser);
+        //console.log(this.currentUser);
 		this._http.post('http://localhost:3000/api/user/photos','', {headers: headers}).subscribe(data => {
 			console.log(data.json());
 			if (data.json().username === localStorage.getItem('user')){this.currentUser = true};
@@ -94,7 +104,10 @@ export class ProfileLikesPhotosComponent {
 	}
 
 	userLink(user){
-    	this._router.parent.navigateByUrl('/' + user);
+		if(user !== this.username){
+	    	window.localStorage.setItem('reRoute', user);
+	        this._router.navigateByUrl('/a?route=profile');
+	    }
     }
 	download(photo,name){
     	//for non IE 
@@ -117,6 +130,9 @@ export class ProfileLikesPhotosComponent {
 	        _window.document.execCommand('SaveAs', true, "unknown")
 	        _window.close();
 	    }
+	}
+	getLinkStyle(path:string):boolean {
+		return this._location.path() === path;
 	}
     like(id,index,type){
 		var voteType = voteData.getType() || type;
@@ -153,5 +169,16 @@ export class ProfileLikesPhotosComponent {
             	window.localStorage.clear();
             }
         })
+	}
+	PhotoLink(){
+		this._router.parent.navigateByUrl('/' + this.username);
+		this.photosView = true;
+		this.likesView = false;
+	}
+	LikesLink(){
+		this._router.parent.navigateByUrl('/' + this.username + '/likes' );
+		this.photosView = false;
+		this.likesView = true;
+		// this._router.navigate(['Profile', 'Profile', {id:this.username}, 'Likes']);
 	}
 }

@@ -11,7 +11,7 @@
 	      </li>
 	      <li class='btn btn-success btn-social' [class.active]="_router.isRouteActive(_router.generate(['/SignUp']))" [routerLink]="['SignUp']" *ngIf="!isLoggedIn()"><a class='btn-social-text'>Join</a></li>
 	      <li class='sign-out' *ngIf="isLoggedIn()"><a (click)="logout()">Sign Out</a></li>
-	      <li class='profile' style='cursor: pointer'*ngIf="isLoggedIn()"><a [class.active]="_router.isRouteActive(_router.generate(['/Profile', 'Profile', {id: navUsername}]))" (click)="profile()">Profile</a></li>
+	      <li class='profile' style='cursor: pointer'*ngIf="isLoggedIn()"><a [class.active]="_router.isRouteActive(_router.generate(['/Profile', 'Profile', {id: navUsername}])) && currentUser()" (click)="profile()">Profile</a></li>
 	    </ul>
 	  </div>
 	</nav>

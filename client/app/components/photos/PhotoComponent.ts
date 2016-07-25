@@ -59,6 +59,8 @@ export class PhotoComponent {
 	firstname: string = '';
 	lastname: string = '';
 	signIn: boolean = false;
+	logout:boolean = false;
+	login:boolean = false;
 
 	/*
 	This constructor would be used if pulling photos from the filesystem - uncomment this code
@@ -91,9 +93,13 @@ export class PhotoComponent {
     		this.change = true;
     	}
  		else if(this._params.get('message') === 'login'){
+ 			this.firstname = localStorage.getItem('first');
+    		this.lastname = localStorage.getItem('last');
+ 			this.login = true;
  			this.change = true;
  		}
  		else if(this._params.get('message') === 'logout'){
+ 			this.logout = true;
  			this.change = true;
  		}
     	else if (this._params.get('message') === 'register'){
@@ -153,7 +159,9 @@ export class PhotoComponent {
     }
 
     userLink(user){
-    	this._router.parent.navigateByUrl('/' + user);
+    	//this is the dirtiest monkey patch. location.path() is async, or something.
+    	window.localStorage.setItem('userLink', user);
+    	this._router.navigate(['Profile', 'Profile', {id: user}]);
     }
 
     download(photo, name){

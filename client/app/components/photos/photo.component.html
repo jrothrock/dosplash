@@ -1,7 +1,9 @@
 <em *ngIf="submit" class='col-md-6 col-md-offset-3 text-center alert alert-success' style='margin-top:40px;font-size: 16px;'>Successfully added a photo</em>
 <em *ngIf="signIn" class='col-md-6 col-md-offset-3 text-center alert alert-warning' style='margin-top:40px;font-size: 16px;'>Please sign in to like photo</em>
 <em *ngIf="loggedOut" class='col-md-6 col-md-offset-3 text-center alert alert-warning' style='margin-top:40px;font-size: 16px;'>Session ended. Please log back in before submitting.</em>
-<em *ngIf="registered" class='col-md-6 col-md-offset-3 text-center alert alert-success' style='margin-top:40px;font-size: 16px;'>Welcome, {{firstname}} {{lastname}}.</em>
+<em *ngIf="registered" class='col-md-6 col-md-offset-3 text-center alert alert-success' style='margin-top:40px;font-size: 16px;'>Successfully registered. Welcome, {{firstname}} {{lastname}}.</em>
+<em *ngIf="login" class='col-md-6 col-md-offset-3 text-center alert alert-info' style='margin-top:40px;font-size: 16px;'>Successfully logged in. Welcome, {{firstname}} {{lastname}}.</em>
+<em *ngIf="logout" class='col-md-6 col-md-offset-3 text-center alert alert-info' style='margin-top:40px;font-size: 16px;'>Successfully logged out.</em>
 <em *ngIf="noPhotos" class='col-md-6 col-md-offset-3 text-center' style='margin-top: 140px;font-size: 16px'>No photos, be the first to add one!</em>
 <div style='margin-top:6%'>
 	<div class="container-fluid" style='margin-bottom:20%' *ngFor="#photo of photos;#i = index">
