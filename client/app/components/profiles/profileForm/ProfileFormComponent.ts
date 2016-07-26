@@ -1,10 +1,14 @@
 import { Component, OnInit } from 'angular2/core';
 import {Http, Headers} from 'angular2/http';
+import {FORM_DIRECTIVES, FormBuilder, Control, ControlGroup, Validators} from 'angular2/common';
 import {UserProfile} from '../../../models/user.profile';
 import { RouteParams, Router }  from 'angular2/router';
 @Component({
 	selector: "ProfileForm",
     templateUrl: 'app/components/profiles/profileForm/profileForm.component.html',
+    directives: [
+        FORM_DIRECTIVES
+    ]
 })
 
 export class ProfileFormComponent {
@@ -38,7 +42,7 @@ export class ProfileFormComponent {
         console.log(creds);
         this._http.post('http://localhost:3000/api/userInfo', creds, {headers: headers}).subscribe(data => {
         	if(data.json().success){
-        		this._router.navigate(['Profile', {id:localStorage.getItem('user')}]);
+        		this._router.navigate(['Profile', 'Profile', {id:localStorage.getItem('user')}]);
         	}
         });
 	}

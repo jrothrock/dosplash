@@ -43,7 +43,6 @@ var cssNPMDependencies = [
 ]
 
 var jsNPMDependencies = [
-	'zepto/zepto.min.js',
 	'notie/dist/notie.min.js',
     'systemjs/dist/system.src.js',
     'es6-shim/es6-shim.min.js',

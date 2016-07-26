@@ -6,7 +6,7 @@
 	<button class="btn btn-default" style='color:#999;font-family:helvetica;font-weight:550;font-size:12px' (click)="form()">EDIT PROFILE</button>
 </div>
 <div style='color:#999;font-size:1em' class='text-center'>
-<i *ngIf="location" class="fa fa-map-marker" style='margin-left:10px;' aria-hidden="true"></i> {{location}}   <i *ngIf="webiste"class="fa fa-globe" style='margin-left: 20px' aria-hidden="true"></i> <a href={{website}}>{{website}}</a>
+<i *ngIf="location" class="fa fa-map-marker" style='margin-left:10px;' aria-hidden="true"></i> {{location}}<i *ngIf="website" class="fa fa-globe" style='margin-left: 20px' aria-hidden="true"></i> <a href={{website}}>{{website}}</a>
 	<div *ngIf="website" style='color:#111;font-size:1.2em;margin-top:5px;'>
 		{{bio}}
 	</div>
