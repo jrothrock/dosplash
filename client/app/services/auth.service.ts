@@ -4,6 +4,13 @@ import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/fromArray';
 import {User} from '../models/user';
 
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + "; " + expires;
+}
+
 @Injectable() 
 export class AuthService {
     public user:User;
@@ -16,6 +23,7 @@ export class AuthService {
     public getToken () {
         return localStorage.getItem('token') || '';
     }
+
 
     login(user) {
         var headers = new Headers({
@@ -34,7 +42,7 @@ export class AuthService {
                 window.localStorage.setItem('email', data.json().data.email);
                 window.localStorage.setItem('first', data.json().data.first);
                 window.localStorage.setItem('last', data.json().data.last);
-                window.localStorage.setItem('token', data.json().data.token);
+                setCookie('_dosplash_session', data.json().data.token, 3);
                 this.isLoggedin = true; 
                 resolve(true);
             }
@@ -65,7 +73,7 @@ export class AuthService {
                window.localStorage.setItem('email', data.json().data.email);
                window.localStorage.setItem('first', data.json().data.first);
                window.localStorage.setItem('last', data.json().data.last);
-               window.localStorage.setItem('token', data.json().data.token);
+               setCookie('_dosplash_session', data.json().data.token, 3);
                resolve(true);
            }
             else
@@ -73,28 +81,35 @@ export class AuthService {
     
         });    
         }).catch(function(e) {
-          console.log(e); // "oh, no!"
+          console.log(e); 
         });
         
     }
     
     logout() {
         return new Promise((resolve, reject) => {
-        var creds = "email=" + localStorage.getItem('user');
-        var headers = new Headers();
-        headers.append('Content-Type', 'application/x-www-form-urlencoded');
-        headers.append('Authorization', 'Bearer ' + this.getToken());
-        console.log(this.getToken());
-        console.log(creds);
-        console.log(headers);
-        this._http.post('http://localhost:3000/auth/logout', creds, {headers: headers}).subscribe(data => {
-            console.log(data);
-            if(data.json().data.success){
-                console.log(data.json());
-                this.isLoggedin = false;
-                window.localStorage.clear();
-                resolve(true);
-            }
+            var creds = "email=" + localStorage.getItem('user');
+            var headers = new Headers();
+            headers.append('Content-Type', 'application/x-www-form-urlencoded');
+            headers.append('Authorization', 'Bearer ' + this.getToken());
+            console.log(this.getToken());
+            console.log(creds);
+            console.log(headers);
+            this._http.post('http://localhost:3000/auth/logout', creds, {headers: headers}).subscribe(data => {
+                console.log(data);
+                if(data.json().data.success){
+                    console.log(data.json());
+                    this.isLoggedin = false;
+                    window.localStorage.clear();
+                    var cookies = document.cookie.split(";");
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = cookies[i];
+                        var eqPos = cookie.indexOf("=");
+                        var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+                        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                    }
+                    resolve(true);
+                }
 
             })
         })
@@ -102,9 +117,26 @@ export class AuthService {
 
 
 
-    isLoggedIn() {
-        var token = localStorage.getItem('token'); 
-        return (token && token.length); 
+    isLoggedIn = {
+        check: function(){
+            var cookies = document.cookie.split(';'); 
+            for(var i = 0; i < cookies.length; i++){
+                if(cookies[i].indexOf('_dosplash_session') === 0 ){
+                    return true;
+                }
+            }
+            return false;
+       },
+       getCookie: function(){
+           var cookies = document.cookie.split(';'); 
+           for(var i = 0; i < cookies.length; i++){
+                if(cookies[i].indexOf('_dosplash_session') === 0 ){
+                    console.log(cookies[i].substring('_dosplash_session='.length, cookies[i].length));
+                    return cookies[i].substring('_dosplash_session='.length, cookies[i].length);
+                }
+           }
+           return '';
+        }
     }
 
 

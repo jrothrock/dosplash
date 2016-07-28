@@ -1,7 +1,8 @@
 import { Component, OnInit } from 'angular2/core';
 import { Router, RouteParams }  from 'angular2/router';
 import {Http, Headers} from 'angular2/http';
-
+import {PhotoService} from '../../services/photo.service';
+import {AuthService} from '../../services/auth.service';
 //cache the photos to minimize db requests
 var photoFeaturedData = {
     	allPhotos: [],
@@ -27,25 +28,13 @@ var photoNewData = {
     	},
 }
 
-var getToken = function() {
-        return localStorage.getItem('token') || '';
-}
 
-var voteData = {
-	type: null,
-	setType: function(newtype){
-		this.type = newtype;
-
-	},
-	getType: function(){
-		return this.type;
-	}
-}
 
 @Component({
 	selector: "PhotoDetail",
 	inputs: ['parent'],
     templateUrl: 'app/components/photos/photo.component.html',
+    providers:[PhotoService]
 })
 export class PhotoComponent {
 	parent: boolean = false; //is false if route is featured (/) and new if route is new (/new)
@@ -61,6 +50,7 @@ export class PhotoComponent {
 	signIn: boolean = false;
 	logout:boolean = false;
 	login:boolean = false;
+	noUser:boolean = false;
 
 	/*
 	This constructor would be used if pulling photos from the filesystem - uncomment this code
@@ -80,7 +70,7 @@ export class PhotoComponent {
     */
 
 
-    constructor(private _http: Http, private _params: RouteParams, private _router: Router) {
+    constructor(private _http: Http, private _params: RouteParams, private _router: Router, private _photoService: PhotoService, private _auth: AuthService) {
     }
 
     ngOnInit(){
@@ -88,7 +78,8 @@ export class PhotoComponent {
     	if(this._params.get('message') === 'submit'){
     		this.submit = true;
     		this.change = true;
-    	} else if (this._params.get('message') === 'false'){
+    	} 
+    	else if (this._params.get('message') === 'false'){
     		this.loggedOut = true;
     		this.change = true;
     	}
@@ -108,12 +99,15 @@ export class PhotoComponent {
     		this.lastname = localStorage.getItem('last');
     		this.change = true;
     	}
+    	else if (this._params.get('message') === 'noUser'){
+    		this.noUser = true;
+    	}
     	console.log(photoFeaturedData.getData().length);
     	if(this.change || (!this.parent && photoFeaturedData.getData().length === 0) || (this.parent && photoNewData.getData().length === 0)){
     		this.photosSet = [];
     		var headers = new Headers({
             	'Content-Type': 'application/x-www-form-urlencoded',
-            	'Authorization': 'Bearer ' + getToken(),
+            	'Authorization': 'Bearer ' + this._auth.isLoggedIn.getCookie(),
             	'Filter': this.parent
         	});
 			this._http.get('http://localhost:3000/api/photos', {headers: headers}).subscribe(data => {
@@ -164,62 +158,54 @@ export class PhotoComponent {
     	this._router.navigate(['Profile', 'Profile', {id: user}]);
     }
 
-    download(photo, name){
-    	//for non IE 
-	    if (!window.ActiveXObject) {
-	        var save = document.createElement('a');
-	        save.href = photo;
-	        save.target = '_blank';
-	        save.download = name || 'unknown';
-
-	        var event = document.createEvent('Event');
-	        event.initEvent('click', true, true);
-	        save.dispatchEvent(event);
-	        (window.URL || window.webkitURL).revokeObjectURL(save.href);
-	    }
-
-	    // for IE
-	    else if ( !! window.ActiveXObject && document.execCommand) {
-	        var _window = window.open(photo, '_blank');
-	        _window.document.close();
-	        _window.document.execCommand('SaveAs', true, "unknown")
-	        _window.close();
-	    }
+    download(photo, name){	
+    	this._photoService.download(photo,name);
 	}
+
 	like(id,index,type){
-		var voteType = voteData.getType() || type;
-		console.log(voteType);
-		console.log('clicked ' + id);
-		console.log('index ' + index);
-		var headers = new Headers({
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': 'Bearer ' + localStorage.getItem('token')
-        });
-        var creds = "photo=" + id + "&type=" + voteType;
-        
-        this._http.post('http://localhost:3000/api/vote', creds, {headers: headers}).subscribe(data => {
-        	console.log(data.json());
-        	if(data.json().success){
-        		voteData.setType(!voteType);
+		this._photoService.like(id,type)
+        .then(data => {
+        	if(data.success){
         		var elementText = document.getElementById("likes-" + index);
-            	elementText.innerHTML = data.json().data.likes.num;
+            	elementText.innerHTML = data.data.likes.num;
+            	var before = this.photos[index].liked;
+            	this.photos[index].liked = !this.photos[index].liked;
+            	this.photos[index].likes = data.data.likes.num;
+            	if(this.parent){
+	    			photoNewData.setData(this.photos);
+	    		} else {
+	    			photoFeaturedData.setData(this.photos);
+	    		}
         	}
-        	if(data.json().success && (data.json().type === 'upvote')){
+        	if(data.success && (data.type === 'upvote')){
             	var elementIcon = document.getElementById("icon-likes-" + index);
             	elementIcon.className += ' liked-icon';
             	var elementButton = document.getElementById("likes-button-" + index);
             	elementButton.className += ' liked';
             }
-            if(data.json().success && (data.json().type === 'downvote')){
+            if(data.success && (data.type === 'downvote')){
             	var elementIcon = document.getElementById("icon-likes-" + index);
             	elementIcon.className = 'fa fa-heart';
             	var elementButton = document.getElementById("likes-button-" + index);
-            	elementButton.className += 'btn btn-default';
+            	elementButton.className += 'btn btn-like';
             }
-            if(!data.json().user && data.json().destroy){
+            if(!data){
             	this.signIn = true;
-            	window.localStorage.clear();
             }
         })
+	}
+
+	setChange(index,liked,likes){
+		this.photos = this.parent? photoNewData.getData() : photoFeaturedData.getData();
+		console.log(this.photos);
+		if(this.photos.length){
+			this.photos[index].liked = liked;
+			this.photos[index].likes = likes;
+			if(this.parent){
+		    	photoNewData.setData(this.photos);
+		   	} else {
+		    	photoFeaturedData.setData(this.photos);
+		    }
+		}
 	}
 }

@@ -1,15 +1,14 @@
-var gulp = require('gulp');
-var path = require('path');
-var sourcemaps = require('gulp-sourcemaps');
-var ts = require('gulp-typescript');
-var del = require('del');
-var concat = require('gulp-concat');
-var runSequence = require('run-sequence');
-var exec = require('child_process').exec;
-var sass = require('gulp-sass');
-var imagemin = require('gulp-imagemin');
-var imageResize = require('gulp-image-resize');
-const spawn = require('child_process').spawn;
+const gulp = require('gulp');
+const path = require('path');
+const sourcemaps = require('gulp-sourcemaps');
+const ts = require('gulp-typescript');
+const del = require('del');
+const concat = require('gulp-concat');
+const runSequence = require('run-sequence');
+const exec = require('child_process').exec;
+const sass = require('gulp-sass');
+const imagemin = require('gulp-imagemin');
+const imageResize = require('gulp-image-resize');
 
 // SERVER
 
@@ -31,7 +30,7 @@ gulp.task('build:server', function () {
 
 // CLIENT
 
-var cssNPMDependencies = [
+const cssNPMDependencies = [
 	'bootstrap/dist/css/bootstrap.css',
 	'font-awesome/css/font-awesome.min.css',
 	'notie/dist/notie.css',
@@ -42,7 +41,7 @@ var cssNPMDependencies = [
 	'font-awesome/fonts/fontawesome-webfont.woff2'
 ]
 
-var jsNPMDependencies = [
+const jsNPMDependencies = [
 	'notie/dist/notie.min.js',
     'systemjs/dist/system.src.js',
     'es6-shim/es6-shim.min.js',
@@ -92,9 +91,8 @@ gulp.task('build:images', () =>
 		.pipe(gulp.dest('dist/app/assets/images'))
 );
 
-var watchFiles = ['client/**/*.ts', 'client/**/*.scss', 'client/index.html', 'server/**/*.ts', 'client/**/*.html']
+const watchFiles = ['client/**/*.ts', 'client/**/*.scss', 'client/index.html', 'server/**/*.ts', 'client/**/*.html']
 
-var started = false;
 
 gulp.task('watch', function(){
  gulp.watch(watchFiles, ['build']);
@@ -106,15 +104,12 @@ gulp.task('build', function(callback){
 });
 
 gulp.task('start-server', ['build', 'watch'], function (cb) {
-	if(!started){
 		exec('node dist/server.js', {maxBuffer: 10000*5000}, function (err, stdout, stderr) {
 	    console.log(stdout);
 	    console.log("stderr" + stderr);
 	    cb(err);
 	    if(err){
-
+	    	console.log(err);
 	    }
-	    started = true;
 	  });
-	}
 });

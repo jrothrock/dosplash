@@ -3,10 +3,8 @@ import { Http, Headers } from 'angular2/http';
 import { Router, ROUTER_DIRECTIVES, ROUTER_PROVIDERS, RouteConfig, RouteParams, CanActivate, Location }  from 'angular2/router';
 import { ProfileLikesPhotosComponent } from '../profilePhotos/likes/ProfileLikesPhotosComponent';
 import { ProfilePhotosComponent } from '../profilePhotos/photos/ProfilePhotosComponent';
+import {AuthService} from '../../../services/auth.service';
 
-var getToken = function() {
-        return localStorage.getItem('token') || '';
-}
 var voteData = {
 	type: null,
 	setType: function(newtype){
@@ -30,7 +28,6 @@ var currentUserData = {
 @Component({
 	selector: "Profile",
     templateUrl: 'app/components/profiles/profile/profile.component.html',
-    //template: `<router-outlet></router-outlet>`,
     directives: [ROUTER_DIRECTIVES]
 })
 @RouteConfig([
@@ -53,8 +50,9 @@ export class ProfileComponent {
 	signIn: boolean = false;
 	photosView: boolean = true;
 	likesView: boolean = false;
+	loaded: boolean;
 
-	constructor(private _params: RouteParams, private _http: Http, private _router: Router, private _location: Location){
+	constructor(private _params: RouteParams, private _http: Http, private _router: Router, private _location: Location, private _auth: AuthService){
 	}
 
 	ngOnInit(){
@@ -73,7 +71,7 @@ export class ProfileComponent {
 		console.log('locationSplit = '+ locationSplit);
 		var headers = new Headers({
             'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': 'Bearer ' + getToken(),
+            'Authorization': 'Bearer ' + this._auth.isLoggedIn.getCookie(),
             'username': locationSplit || userLink || localStorage.getItem('user'),
             'type': this.likesView || 'photos'
         });
@@ -88,21 +86,21 @@ export class ProfileComponent {
 			if (data.json().username === localStorage.getItem('user')){this.currentUser = true};
 			//console.log(this.currentUser);
 			if(data.json().nouser){
-					
+				this._router.parent.navigateByUrl('/?message=noUser');
 			}else{
 				this.noPhotos = false;
-					this.lastname = data.json().lastname;
-					this.firstname = data.json().firstname;
-					this.username = data.json().username;
-					this.website = data.json().website;
-					this.location = data.json().location;
-					this.bio = data.json().bio;
-					this.photoCounter = data.json().photosLength;
-					this.likeCounter = data.json().likesLength;
+				this.lastname = data.json().lastname;
+				this.firstname = data.json().firstname;
+				this.username = data.json().username;
+				this.website = data.json().website;
+				this.location = data.json().location;
+				this.bio = data.json().bio;
+				this.photoCounter = data.json().photosLength;
+				this.likeCounter = data.json().likesLength;
+				this.loaded = true;
 			}
 			if(this.photoCounter === 0){
-				//console.log('photoCounter = '+this.photoCounter);
-				//this.LikesLink();
+				this.LikesLink();
 			}
 		})
 	}
@@ -158,19 +156,19 @@ export class ProfileComponent {
         		var elementText = document.getElementById("likes-" + index);
             	elementText.innerHTML = data.json().data.likes.num;
         	}
-        	if(data.json().success && (data.json().type === 'upvote')){
+        	else if(data.json().success && (data.json().type === 'upvote')){
             	var elementIcon = document.getElementById("icon-likes-" + index);
             	elementIcon.className += ' liked-icon';
             	var elementButton = document.getElementById("likes-button-" + index);
             	elementButton.className += ' liked';
             }
-            if(data.json().success && (data.json().type === 'downvote')){
+            else if(data.json().success && (data.json().type === 'downvote')){
             	var elementIcon = document.getElementById("icon-likes-" + index);
             	elementIcon.className = 'fa fa-heart';
             	var elementButton = document.getElementById("likes-button-" + index);
             	elementButton.className += 'btn btn-default';
             }
-            if(!data.json().user && data.json().destroy){
+            else if(!data.json().user && data.json().destroy){
             	this.signIn = true;
             	window.localStorage.clear();
             }
@@ -185,6 +183,5 @@ export class ProfileComponent {
 		this._router.parent.navigateByUrl('/' + this.username + '/likes' );
 		this.photosView = false;
 		this.likesView = true;
-		// this._router.navigate(['Profile', 'Profile', {id:this.username}, 'Likes']);
 	}
 }

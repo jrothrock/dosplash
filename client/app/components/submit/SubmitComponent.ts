@@ -1,5 +1,6 @@
 import { Component, OnInit } from 'angular2/core';
 import { Router, ROUTER_DIRECTIVES, RouteParams }  from 'angular2/router';
+import {AuthService} from '../../services/auth.service';
 
 @Component({
 	selector: "Submit",
@@ -11,11 +12,7 @@ export class SubmitComponent {
     error:boolean = false;
     submit:boolean = false;
 
-    constructor(private _router: Router, private _params: RouteParams) {
-    }
-
-    public getToken () {
-        return localStorage.getItem('token') || '';
+    constructor(private _router: Router, private _params: RouteParams, private _auth: AuthService) {
     }
 
     ngOnInit(){
@@ -67,7 +64,7 @@ export class SubmitComponent {
                 }
             }
             xhr.open("POST", url, true);
-            xhr.setRequestHeader("Authorization", 'Bearer ' + this.getToken());
+            xhr.setRequestHeader("Authorization", 'Bearer ' + this._auth.isLoggedIn.getCookie());
             xhr.send(formData);
         });
     }

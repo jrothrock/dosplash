@@ -113,10 +113,10 @@ a {
 
 .icon{
 	margin-top: 40px;
+	margin-right:25px;
 }
 .social-icons{
 	position:relative;
-	margin-left: 46vw;
 
 	i{
 		color: #999;
@@ -139,14 +139,16 @@ a {
 	color:red;
 }
 .thumbnail_container {
-     position: relative;
      width: 100%;
      height: 260px;
-     float:left;
+     margin-bottom: 30px;
+}
+.container-fluid{
+	margin-bottom: 50px;
 }
 .liked{
-	background-color: red;
-	color: white;
+	background-color: red !important;
+	color: white !important;
 }
 .liked-icon{
 	color:white;
@@ -154,4 +156,8 @@ a {
 .selected-view{
 	color: #111;
 	font-weight:500;
+}
+.btn-like{
+	background-color:white;
+	border: 1px solid #999;
 }

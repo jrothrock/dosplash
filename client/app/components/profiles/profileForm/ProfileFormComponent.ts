@@ -3,6 +3,8 @@ import {Http, Headers} from 'angular2/http';
 import {FORM_DIRECTIVES, FormBuilder, Control, ControlGroup, Validators} from 'angular2/common';
 import {UserProfile} from '../../../models/user.profile';
 import { RouteParams, Router }  from 'angular2/router';
+import {AuthService} from '../../../services/auth.service';
+
 @Component({
 	selector: "ProfileForm",
     templateUrl: 'app/components/profiles/profileForm/profileForm.component.html',
@@ -16,7 +18,7 @@ export class ProfileFormComponent {
 	firstname:string = '';
 	lastname:string = '';
 	
-	constructor(private _params: RouteParams, private _http: Http, private _router: Router){
+	constructor(private _params: RouteParams, private _http: Http, private _router: Router, private _auth: AuthService){
 	}
 
 	ngOnInit(){
@@ -33,7 +35,7 @@ export class ProfileFormComponent {
 	handleSubmit(model) {
 		var headers = new Headers({
             'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': 'Bearer ' + localStorage.getItem('token')
+            'Authorization': 'Bearer ' + this._auth.isLoggedIn.getCookie()
         });
         console.log(model);
         console.log(localStorage.getItem('token'));

@@ -39,8 +39,8 @@ import { DummyComponent } from '../dummy/DummyComponent';
 export class AppComponent {
     navUsername: string = '';
     newString:string = 'new';
-    isLoggedIn = this._auth.isLoggedIn;
-
+    isLoggedIn = this._auth.isLoggedIn.check;
+    
     constructor (private _router: Router, public _auth: AuthService, private _location: Location) {
     }
 

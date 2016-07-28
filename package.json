@@ -4,7 +4,6 @@
   "description": "MEAN stack clone of the popular website unsplash",
   "main": "dist/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "gulp start-server"
   },
   "keywords": [],

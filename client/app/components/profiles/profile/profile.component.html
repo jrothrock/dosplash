@@ -15,7 +15,9 @@
 	<span style='cursor:pointer;text-decoration: underline'><a (click)="submit()"> Submit a photo </a></span>
 </div>
 <em *ngIf="signIn" class='col-md-6 col-md-offset-3 text-center alert alert-warning' style='margin-top:40px;font-size: 16px;'>Please sign in to like photo</em>
-<div style='margin-top:6%' id='profile-photos'>
-	<span class='col-md-6 col-md-offset-3' id='allphotos'><a [ngClass]="{ 'selected-view' : getLinkStyle('/'+username)}" (click)='PhotoLink()'>{{photoCounter}} Photos  </a><a [ngClass]="{ 'selected-view' : getLinkStyle('/'+username+'/likes')}" (click)='LikesLink()'>  {{likeCounter}} Likes</a> </span>
+<div *ngIf="loaded" style='margin-top:6%' id='profile-photos'>
+	<span class='col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3' id='allphotos'><a [ngClass]="{ 'selected-view' : getLinkStyle('/'+username)}" (click)='PhotoLink()'>{{photoCounter}} Photos  </a><a [ngClass]="{ 'selected-view' : getLinkStyle('/'+username+'/likes')}" (click)='LikesLink()'>  {{likeCounter}} Likes</a> </span>
+</div>
+<div style='margin-top:6%' id='profile-photos' class='col-xs-12'>
 	<router-outlet></router-outlet>
 </div>

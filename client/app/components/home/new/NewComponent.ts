@@ -1,6 +1,7 @@
 import { Component } from 'angular2/core';
 import { Router, ROUTER_DIRECTIVES }  from 'angular2/router';
 import { PhotoComponent } from '../../photos/PhotoComponent';
+import {AuthService} from '../../../services/auth.service';
 
 @Component({
 	selector: "Home",
@@ -10,11 +11,11 @@ import { PhotoComponent } from '../../photos/PhotoComponent';
 export class NewComponent {
 	loggedIn = false;
 	register = true;
-	constructor(private _router: Router) {
+	constructor(private _router: Router, private _auth: AuthService) {
 	}
 
 	submit(){
-		if(localStorage.getItem('token')){
+		if(this._auth.isLoggedIn.check){
 			this._router.parent.navigateByUrl('/submit');
 			return true;
 		}
